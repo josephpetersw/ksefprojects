@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Dashboard — Classroom AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="app-layout">
+      <!-- ── Sidebar ── -->
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <img src="kseflogo.png" alt="KSEF" class="sidebar-brand-logo" />
+          <div class="sidebar-brand-text">
+            <span class="sidebar-brand-name">Classroom AI</span>
+            <span class="sidebar-brand-sub">62nd KSEF · 2026</span>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <span class="nav-section-label">Monitor</span>
+          <a href="dashboard.html" class="nav-link"
+            ><i class="fas fa-chart-pie"></i><span>Dashboard</span></a
+          >
+          <a href="livefeed.html" class="nav-link"
+            ><i class="fas fa-broadcast-tower"></i><span>Live Feed</span></a
+          >
+          <a href="upload.html" class="nav-link"
+            ><i class="fas fa-film"></i><span>Video Analysis</span></a
+          >
+          <span class="nav-section-label">Library</span>
+          <a href="videos.html" class="nav-link"
+            ><i class="fas fa-photo-video"></i><span>Video Library</span></a
+          >
+          <span class="nav-section-label">Insights</span>
+          <a href="statistics.html" class="nav-link"
+            ><i class="fas fa-chart-line"></i><span>Statistics</span></a
+          >
+          <a href="report.html" class="nav-link"
+            ><i class="fas fa-file-alt"></i><span>Session Report</span></a
+          >
+          <span class="nav-section-label">System</span>
+          <a href="settings.html" class="nav-link"
+            ><i class="fas fa-sliders"></i><span>Settings</span></a
+          >
+          <a href="about.html" class="nav-link"
+            ><i class="fas fa-info-circle"></i><span>About</span></a
+          >
+          <a href="help.html" class="nav-link"
+            ><i class="fas fa-circle-question"></i><span>Help</span></a
+          >
+        </nav>
+        <div class="sidebar-footer">
+          Precious Lydiah &amp; Shirleen Wambui<br />
+          Maryhill Girls High School
+        </div>
+      </aside>
+
+      <!-- ── Topbar ── -->
+      <header class="topbar">
+        <button class="topbar-toggle topbar-btn" id="sidebarToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+        <h1 class="topbar-title">Dashboard</h1>
+        <div class="topbar-actions">
+          <span
+            id="topbarClock"
+            style="
+              font-size: 0.82rem;
+              color: var(--text-muted);
+              font-variant-numeric: tabular-nums;
+            "
+          ></span>
+          <button class="topbar-btn" id="darkModeToggle" title="Toggle theme">
+            <i id="darkModeIcon" class="fas fa-moon"></i>
+          </button>
+          <div class="user-chip">
+            <div class="user-avatar">PL</div>
+            <span>Precious &amp; Shirleen</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- ── Main ── -->
+      <main class="main-content">
+        <!-- Quick launch alert -->
+        <div class="alert alert-info mb-16" id="quickLaunchAlert">
+          <i class="fas fa-info-circle"></i>
+          <span
+            >Start a
+            <a
+              href="livefeed.html"
+              style="
+                color: inherit;
+                text-decoration: underline;
+                font-weight: 600;
+              "
+              >live camera session</a
+            >
+            or
+            <a
+              href="upload.html"
+              style="
+                color: inherit;
+                text-decoration: underline;
+                font-weight: 600;
+              "
+              >upload a video</a
+            >
+            to begin real-time behaviour analysis.</span
+          >
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="grid-4 page-section" id="kpiGrid">
+          <div class="stat-card anim-fade-up anim-delay-1">
+            <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+            <div class="stat-body">
+              <div class="stat-label">Students Detected</div>
+              <div class="stat-value" id="kpiStudents">—</div>
+              <div class="stat-sub">Last session total</div>
+            </div>
+          </div>
+          <div class="stat-card anim-fade-up anim-delay-2">
+            <div class="stat-icon green"><i class="fas fa-brain"></i></div>
+            <div class="stat-body">
+              <div class="stat-label">Avg Attention</div>
+              <div class="stat-value" id="kpiAttention">—</div>
+              <div class="stat-sub">Class average</div>
+            </div>
+          </div>
+          <div class="stat-card anim-fade-up anim-delay-3">
+            <div class="stat-icon red">
+              <i class="fas fa-triangle-exclamation"></i>
+            </div>
+            <div class="stat-body">
+              <div class="stat-label">Behaviour Alerts</div>
+              <div class="stat-value" id="kpiAlerts">—</div>
+              <div class="stat-sub">Disruptive / Suspicious</div>
+            </div>
+          </div>
+          <div class="stat-card anim-fade-up anim-delay-4">
+            <div class="stat-icon cyan"><i class="fas fa-clock"></i></div>
+            <div class="stat-body">
+              <div class="stat-label">Session Duration</div>
+              <div class="stat-value" id="kpiDuration">—</div>
+              <div class="stat-sub">Last session</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main grid: Behaviour log + Session history -->
+        <div class="grid-2 page-section anim-fade-up anim-delay-2">
+          <!-- Behaviour breakdown -->
+          <div class="glass-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fas fa-chart-pie"></i> Last Session Behaviour
+              </div>
+            </div>
+            <div id="behavBreakdown">
+              <div class="empty-state">
+                <i class="fas fa-video-slash"></i>
+                <p>
+                  No session data yet. Run a camera or video session to see
+                  results here.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent events log -->
+          <div class="glass-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fas fa-list-check"></i> Recent Events
+              </div>
+              <button
+                class="btn btn-ghost"
+                style="padding: 6px 12px; font-size: 0.78rem"
+                onclick="clearLog()"
+              >
+                <i class="fas fa-trash"></i> Clear
+              </button>
+            </div>
+            <div class="event-log" id="eventLog">
+              <div class="empty-state" style="padding: 32px 0">
+                <i class="fas fa-inbox"></i>
+                <p>No events logged yet.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick launch cards -->
+        <div class="section-title">Quick Launch</div>
+        <div class="grid-3 page-section">
+          <a
+            href="livefeed.html"
+            class="glass-card"
+            style="cursor: pointer; text-decoration: none; display: block"
+          >
+            <div style="font-size: 2rem; margin-bottom: 12px">📡</div>
+            <div
+              style="
+                font-family: var(--font-head);
+                font-size: 1.05rem;
+                font-weight: 700;
+                color: var(--text-primary);
+                margin-bottom: 6px;
+              "
+            >
+              Live Feed
+            </div>
+            <div style="font-size: 0.82rem; color: var(--text-muted)">
+              Full live camera monitoring with noise level analysis, behaviour
+              distribution, and real-time alerts.
+            </div>
+            <div
+              style="
+                margin-top: 14px;
+                color: var(--cyan);
+                font-size: 0.82rem;
+                font-weight: 600;
+              "
+            >
+              Start live <i class="fas fa-arrow-right"></i>
+            </div>
+          </a>
+          <a
+            href="upload.html"
+            class="glass-card"
+            style="cursor: pointer; text-decoration: none; display: block"
+          >
+            <div style="font-size: 2rem; margin-bottom: 12px">🎬</div>
+            <div
+              style="
+                font-family: var(--font-head);
+                font-size: 1.05rem;
+                font-weight: 700;
+                color: var(--text-primary);
+                margin-bottom: 6px;
+              "
+            >
+              Video Analysis
+            </div>
+            <div style="font-size: 0.82rem; color: var(--text-muted)">
+              Upload a recorded classroom video and analyse student behaviour
+              frame by frame with AI overlay.
+            </div>
+            <div
+              style="
+                margin-top: 14px;
+                color: var(--cyan);
+                font-size: 0.82rem;
+                font-weight: 600;
+              "
+            >
+              Upload video <i class="fas fa-arrow-right"></i>
+            </div>
+          </a>
+          <a
+            href="statistics.html"
+            class="glass-card"
+            style="cursor: pointer; text-decoration: none; display: block"
+          >
+            <div style="font-size: 2rem; margin-bottom: 12px">📊</div>
+            <div
+              style="
+                font-family: var(--font-head);
+                font-size: 1.05rem;
+                font-weight: 700;
+                color: var(--text-primary);
+                margin-bottom: 6px;
+              "
+            >
+              Statistics
+            </div>
+            <div style="font-size: 0.82rem; color: var(--text-muted)">
+              View session history, engagement trends, and behaviour
+              distribution charts over time.
+            </div>
+            <div
+              style="
+                margin-top: 14px;
+                color: var(--cyan);
+                font-size: 0.82rem;
+                font-weight: 600;
+              "
+            >
+              View stats <i class="fas fa-arrow-right"></i>
+            </div>
+          </a>
+        </div>
+      </main>
+      <footer
+        style="
+          border-top: 1px solid var(--border);
+          padding: 20px 32px;
+          margin-left:var(--sidebar-w);
+          font-size: 0.8rem;
+          color: var(--text-muted);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 10px;
+        "
+      >
+        <span>Classroom AI &mdash; 62nd KSEF 2026</span>
+        <span
+          >Precious Lydiah &amp; Shirleen Wambui &middot; Maryhill Girls High
+          School</span
+        >
+      </footer>
+    </div>
+
+    <script src="js/logger.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+      // Load last session data from localStorage
+      function loadDashboard() {
+        const sessions = Store.get("sessions", []);
+        const logs = Store.get("event_log", []);
+
+        if (sessions.length > 0) {
+          const last = sessions[0];
+          document.getElementById("kpiStudents").textContent =
+            last.maxStudents ?? "—";
+          document.getElementById("kpiAttention").textContent =
+            last.avgAttention != null ? last.avgAttention + "%" : "—";
+          document.getElementById("kpiAlerts").textContent = last.alerts ?? "—";
+          document.getElementById("kpiDuration").textContent =
+            last.duration != null ? fmtDuration(last.duration) : "—";
+
+          // Behaviour breakdown
+          if (last.behaviourCounts) {
+            const container = document.getElementById("behavBreakdown");
+            container.innerHTML = "";
+            Object.entries(last.behaviourCounts)
+              .sort(([, a], [, b]) => b - a)
+              .forEach(([label, count]) => {
+                const total = Object.values(last.behaviourCounts).reduce(
+                  (s, v) => s + v,
+                  0,
+                );
+                const pct = total ? Math.round((count / total) * 100) : 0;
+                const badgeMap = {
+                  Attentive: "attentive",
+                  Engaged: "engaged",
+                  Alert: "alert-b",
+                  Disengaged: "disengaged",
+                  Anxious: "anxious",
+                  Disruptive: "disruptive",
+                  Suspicious: "suspicious",
+                  Confused: "confused",
+                };
+                const badge = badgeMap[label] || "attentive";
+                container.innerHTML += `
+              <div style="margin-bottom:14px;">
+                <div class="flex items-center justify-between mb-8">
+                  <span class="behavior-badge ${badge}">${label}</span>
+                  <span style="font-size:0.8rem;color:var(--text-muted);">${count} (${pct}%)</span>
+                </div>
+                <div class="meter-track">
+                  <div class="meter-fill ${badge === "disruptive" || badge === "suspicious" ? "red" : badge === "disengaged" ? "amber" : "cyan"}"
+                       style="width:${pct}%"></div>
+                </div>
+              </div>`;
+              });
+          }
+        }
+
+        // Event log
+        renderEventLog(logs.slice(0, 20));
+      }
+
+      function renderEventLog(logs) {
+        const el = document.getElementById("eventLog");
+        if (!logs.length) return;
+        const dotMap = { 3: "red", 2: "amber", 1: "cyan", 0: "green" };
+        el.innerHTML = logs
+          .map(
+            (e) => `
+      <div class="log-item">
+        <div class="log-dot ${dotMap[e.severity || 0] || "cyan"}"></div>
+        <div class="log-body">
+          <div class="log-text">${e.text || e.id + ": " + e.current}</div>
+          <div class="log-time">${fmtTime(e.timestamp)}</div>
+        </div>
+      </div>`,
+          )
+          .join("");
+      }
+
+      function clearLog() {
+        Store.set("event_log", []);
+        document.getElementById("eventLog").innerHTML =
+          '<div class="empty-state" style="padding:32px 0;"><i class="fas fa-inbox"></i><p>No events logged yet.</p></div>';
+        showToast("Event log cleared", "info");
+      }
+
+      loadDashboard();
+    </script>
+  </body>
+</html>

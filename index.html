@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Classroom AI — 62nd KSEF 2026</title>
+  <meta name="description" content="Classroom AI: a real-time, in-browser AI system that classifies student behaviour from facial expressions — presented at the 62nd Kenya Science & Engineering Fair 2026 by Precious Lydiah & Shirleen Wambui, Maryhill Girls High School.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #060c1a;
+      --navy2:  #0d1628;
+      --blue:   #1d4ed8;
+      --blue2:  #2563eb;
+      --cyan:   #06b6d4;
+      --gold:   #f59e0b;
+      --green:  #10b981;
+      --text:   #f1f5f9;
+      --muted:  #94a3b8;
+      --dim:    #475569;
+      --border: rgba(255,255,255,0.08);
+      --card:   rgba(255,255,255,0.04);
+      --r:      16px;
+      --r-sm:   10px;
+      --r-full: 9999px;
+      --font-h: 'Space Grotesk', sans-serif;
+      --font-b: 'Inter', sans-serif;
+      --t:      0.25s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-b);
+      background: var(--navy);
+      color: var(--text);
+      line-height: 1.65;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    /* ── HEADER ─────────────────────────────── */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(6,12,26,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand img { height: 38px; width: auto; }
+
+    .brand-text { display: flex; flex-direction: column; }
+    .brand-name {
+      font-family: var(--font-h);
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .brand-sub {
+      font-size: 0.65rem;
+      color: var(--cyan);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .header-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-links a {
+      padding: 7px 16px;
+      border-radius: var(--r-sm);
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: all var(--t);
+    }
+    .header-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+
+
+    /* ── HERO / MAIN ─────────────────────────── */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 24px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* animated background */
+    .page-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 120% 80% at 50% -10%, rgba(29,78,216,0.25), transparent 60%),
+        radial-gradient(ellipse 60% 60% at 10% 90%,  rgba(6,182,212,0.10), transparent 55%),
+        radial-gradient(ellipse 60% 60% at 90% 80%,  rgba(29,78,216,0.08), transparent 55%);
+      pointer-events: none;
+    }
+
+    .page-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(29,78,216,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(29,78,216,0.05) 1px, transparent 1px);
+      background-size: 64px 64px;
+      animation: gridScroll 40s linear infinite;
+    }
+
+    @keyframes gridScroll {
+      from { background-position: 0 0; }
+      to   { background-position: 64px 64px; }
+    }
+
+    /* floating orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.18;
+      pointer-events: none;
+      animation: orbFloat 12s ease-in-out infinite alternate;
+    }
+    .orb-1 { width: 460px; height: 460px; background: var(--blue); top: -120px; left: -100px; animation-duration: 14s; }
+    .orb-2 { width: 320px; height: 320px; background: var(--cyan); bottom: -60px; right: -60px; animation-duration: 10s; animation-delay: -4s; }
+    .orb-3 { width: 240px; height: 240px; background: var(--blue2); top: 50%; right: 10%; animation-duration: 16s; animation-delay: -8s; }
+
+    @keyframes orbFloat {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(30px, 20px) scale(1.08); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 820px;
+    }
+
+    .ksef-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245,158,11,0.12);
+      border: 1px solid rgba(245,158,11,0.3);
+      border-radius: var(--r-full);
+      padding: 6px 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fcd34d;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 32px;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .hero-title {
+      font-family: var(--font-h);
+      font-size: clamp(2.6rem, 7vw, 5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      background: linear-gradient(145deg, #f1f5f9 15%, var(--cyan) 85%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+      animation: fadeUp 0.5s 0.05s ease both;
+    }
+
+    .hero-tagline {
+      font-family: var(--font-h);
+      font-size: clamp(1rem, 2.5vw, 1.35rem);
+      font-weight: 400;
+      color: var(--cyan);
+      margin-bottom: 20px;
+      animation: fadeUp 0.5s 0.1s ease both;
+      opacity: 0.9;
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 580px;
+      margin: 0 auto 48px;
+      line-height: 1.75;
+      animation: fadeUp 0.5s 0.15s ease both;
+    }
+
+    /* ── CTA BUTTONS ─────────────────────────── */
+    .cta-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.5s 0.2s ease both;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px 32px;
+      border-radius: var(--r-sm);
+      font-family: var(--font-b);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all var(--t);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.08);
+      opacity: 0;
+      transition: opacity var(--t);
+    }
+    .cta-btn:hover::after { opacity: 1; }
+
+    .cta-primary {
+      background: linear-gradient(135deg, var(--blue), #1e40af);
+      color: white;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.1) inset, 0 8px 32px rgba(29,78,216,0.35);
+    }
+    .cta-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.15) inset, 0 16px 48px rgba(29,78,216,0.5);
+    }
+
+    .cta-secondary {
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+    .cta-secondary:hover {
+      background: rgba(255,255,255,0.10);
+      border-color: rgba(255,255,255,0.22);
+      transform: translateY(-3px);
+    }
+
+    .cta-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .cta-primary .cta-icon   { background: rgba(255,255,255,0.18); }
+    .cta-secondary .cta-icon { background: rgba(255,255,255,0.08); }
+
+    .cta-text { text-align: left; }
+    .cta-label { display: block; font-size: 0.75rem; font-weight: 500; opacity: 0.7; margin-bottom: 1px; }
+    .cta-main  { display: block; font-size: 1rem; }
+
+    /* ── FEATURE CHIPS ───────────────────────── */
+    .feature-chips {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 48px;
+      animation: fadeUp 0.5s 0.28s ease both;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-full);
+      font-size: 0.8rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .chip i { color: var(--cyan); font-size: 0.72rem; }
+
+    /* ── DIVIDER STRIP ───────────────────────── */
+    .strip {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      margin-top: 72px;
+      padding-top: 48px;
+      text-align: center;
+      width: 100%;
+      max-width: 820px;
+      animation: fadeUp 0.5s 0.35s ease both;
+    }
+
+    .team-block {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .team-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-h);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+    .av-pl { background: linear-gradient(135deg, var(--blue), var(--cyan)); }
+    .av-sw { background: linear-gradient(135deg, #7c3aed, var(--cyan)); }
+
+    .team-info { text-align: left; }
+    .team-names {
+      font-family: var(--font-h);
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .team-school {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .team-divider {
+      width: 1px;
+      height: 32px;
+      background: var(--border);
+    }
+
+    .school-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: var(--r-full);
+      background: rgba(245,158,11,0.1);
+      border: 1px solid rgba(245,158,11,0.25);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #fcd34d;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── FOOTER ──────────────────────────────── */
+    .footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 28px 24px;
+      border-top: 1px solid var(--border);
+      font-size: 0.78rem;
+      color: var(--dim);
+    }
+    .footer a { color: var(--muted); }
+    .footer a:hover { color: var(--text); }
+
+    /* ── RESPONSIVE ──────────────────────────── */
+    @media (max-width: 640px) {
+      .cta-row { flex-direction: column; align-items: stretch; }
+      .cta-btn { width: 100%; justify-content: flex-start; }
+      .header-links { display: none; }
+      .team-divider { display: none; }
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img src="assets/img/kseflogo.png" alt="KSEF Logo">
+      <div class="brand-text">
+        <span class="brand-name">Classroom AI</span>
+        <span class="brand-sub">62nd KSEF · 2026</span>
+      </div>
+    </a>
+
+    <div class="header-links">
+      <a href="classroomai/dashboard.html"><i class="fas fa-broadcast-tower" style="margin-right:4px;"></i>Live App</a>
+      <a href="project-classroom-ai.html"><i class="fas fa-file-alt" style="margin-right:4px;"></i>Documentation</a>
+    </div>
+  </div>
+</header>
+
+<!-- ── MAIN PAGE ── -->
+<main class="page" id="main">
+  <div class="page-bg"></div>
+  <div class="page-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="hero-content">
+
+    <div class="ksef-badge">
+      <i class="fas fa-star"></i>
+      62nd Kenya Science &amp; Engineering Fair · 2026
+    </div>
+
+    <h1 class="hero-title">Classroom AI</h1>
+    <p class="hero-tagline">Real-Time Student Behaviour Analysis</p>
+
+    <p class="hero-desc">
+      An in-browser AI system that classifies student behaviour in real time from facial expressions
+      and head-pose estimation — helping Kenyan teachers gain objective insights into classroom
+      engagement. No external servers. No specialist hardware. Just a webcam and a browser.
+    </p>
+
+    <!-- ── CTA BUTTONS ── -->
+    <div class="cta-row">
+      <a href="classroomai/dashboard.html" class="cta-btn cta-primary" id="btn-live-app">
+        <span class="cta-icon"><i class="fas fa-broadcast-tower"></i></span>
+        <span class="cta-text">
+          <span class="cta-label">Try it now →</span>
+          <span class="cta-main">Open Live App</span>
+        </span>
+      </a>
+
+      <a href="project-classroom-ai.html" class="cta-btn cta-secondary" id="btn-docs">
+        <span class="cta-icon"><i class="fas fa-file-alt"></i></span>
+        <span class="cta-text">
+          <span class="cta-label">Research &amp; methodology</span>
+          <span class="cta-main">View Documentation</span>
+        </span>
+      </a>
+    </div>
+
+    <!-- ── FEATURE CHIPS ── -->
+    <div class="feature-chips">
+      <span class="chip"><i class="fas fa-brain"></i> face-api.js AI</span>
+      <span class="chip"><i class="fas fa-lock"></i> 100% Private</span>
+      <span class="chip"><i class="fas fa-bolt"></i> Real-Time</span>
+      <span class="chip"><i class="fas fa-video"></i> Live Feed</span>
+      <span class="chip"><i class="fas fa-film"></i> Video Analysis</span>
+      <span class="chip"><i class="fas fa-microphone-alt"></i> Noise Monitor</span>
+      <span class="chip"><i class="fas fa-chart-line"></i> Statistics &amp; Reports</span>
+    </div>
+
+    <!-- ── TEAM STRIP ── -->
+    <div class="strip">
+      <div class="team-block">
+        <div class="team-avatar av-pl">PL</div>
+        <div class="team-avatar av-sw" style="margin-left:-10px;">SW</div>
+        <div class="team-info">
+          <div class="team-names">Precious Lydiah &amp; Shirleen Wambui</div>
+          <div class="team-school">Maryhill Girls High School, Thika · Kenya</div>
+        </div>
+        <div class="team-divider"></div>
+        <span class="school-tag"><i class="fas fa-trophy"></i> KSEF 2026 — AI &amp; Technology</span>
+      </div>
+    </div>
+
+  </div><!-- /hero-content -->
+</main>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <p>
+    Classroom AI &mdash; 62nd Kenya Science &amp; Engineering Fair 2026
+    &nbsp;·&nbsp;
+    Maryhill Girls High School
+    &nbsp;·&nbsp;
+    <a href="classroomai/dashboard.html">Live App</a>
+    &nbsp;·&nbsp;
+    <a href="project-classroom-ai.html">Documentation</a>
+  </p>
+</footer>
+
+</body>
+</html>

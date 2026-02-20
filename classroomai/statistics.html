@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Statistics — Classroom AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <img src="kseflogo.png" alt="KSEF" class="sidebar-brand-logo">
+      <div class="sidebar-brand-text">
+        <span class="sidebar-brand-name">Classroom AI</span>
+        <span class="sidebar-brand-sub">62nd KSEF · 2026</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Monitor</span>
+      <a href="dashboard.html" class="nav-link"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+      <a href="livefeed.html" class="nav-link"><i class="fas fa-broadcast-tower"></i><span>Live Feed</span></a>
+      <a href="cctv_room.html" class="nav-link"><i class="fas fa-video"></i><span>CCTV Room</span></a>
+      <a href="upload.html" class="nav-link"><i class="fas fa-film"></i><span>Video Analysis</span></a>
+      <span class="nav-section-label">Library</span>
+      <a href="videos.html" class="nav-link"><i class="fas fa-photo-video"></i><span>Video Library</span></a>
+      <span class="nav-section-label">Insights</span>
+      <a href="statistics.html" class="nav-link"><i class="fas fa-chart-line"></i><span>Statistics</span></a>
+      <a href="report.html" class="nav-link"><i class="fas fa-file-alt"></i><span>Session Report</span></a>
+      <span class="nav-section-label">System</span>
+      <a href="settings.html" class="nav-link"><i class="fas fa-sliders"></i><span>Settings</span></a>
+      <a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i><span>About</span></a>
+      <a href="help.html" class="nav-link"><i class="fas fa-circle-question"></i><span>Help</span></a>
+    </nav>
+    <div class="sidebar-footer">Precious Lydiah &amp; Shirleen Wambui<br>Maryhill Girls High School</div>
+  </aside>
+
+  <header class="topbar">
+    <button class="topbar-toggle topbar-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <h1 class="topbar-title">Statistics &amp; Reports</h1>
+    <div class="topbar-actions">
+      <span id="topbarClock" style="font-size:0.82rem;color:var(--text-muted);"></span>
+      <button class="topbar-btn" id="darkModeToggle"><i id="darkModeIcon" class="fas fa-moon"></i></button>
+      <div class="user-chip"><div class="user-avatar">PL</div><span>Precious &amp; Shirleen</span></div>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <!-- No sessions fallback -->
+    <div id="noDataMsg" style="display:none;">
+      <div class="empty-state" style="padding:80px 24px;">
+        <i class="fas fa-chart-line"></i>
+        <p>No session data yet. Run a camera or video session to see statistics here.</p>
+        <a href="livefeed.html" class="btn btn-primary mt-16">
+          <i class="fas fa-broadcast-tower"></i> Start Live Session
+        </a>
+      </div>
+    </div>
+
+    <div id="statsContent">
+      <!-- Summary KPIs -->
+      <div class="grid-4 page-section mb-16">
+        <div class="stat-card">
+          <div class="stat-icon cyan"><i class="fas fa-layer-group"></i></div>
+          <div class="stat-body">
+            <div class="stat-label">Total Sessions</div>
+            <div class="stat-value" id="totalSessions">0</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><i class="fas fa-brain"></i></div>
+          <div class="stat-body">
+            <div class="stat-label">Overall Avg Attention</div>
+            <div class="stat-value" id="overallAttention">—</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+          <div class="stat-body">
+            <div class="stat-label">Peak Students</div>
+            <div class="stat-value" id="peakStudents">—</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red"><i class="fas fa-triangle-exclamation"></i></div>
+          <div class="stat-body">
+            <div class="stat-label">Total Alerts</div>
+            <div class="stat-value" id="totalAlerts">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts row -->
+      <div class="grid-2 page-section">
+        <div class="glass-card">
+          <div class="card-title mb-16"><i class="fas fa-chart-line"></i> Attention Over Sessions</div>
+          <canvas id="engagementChart" height="220"></canvas>
+        </div>
+        <div class="glass-card">
+          <div class="card-title mb-16"><i class="fas fa-chart-pie"></i> Behaviour Distribution</div>
+          <canvas id="behaviourChart" height="220"></canvas>
+        </div>
+      </div>
+
+      <!-- Session history -->
+      <div class="glass-card page-section">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-history"></i> Session History</div>
+          <button class="btn btn-ghost" style="padding:6px 12px;font-size:0.78rem;" onclick="clearSessions()">
+            <i class="fas fa-trash"></i> Clear All
+          </button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="sessionTable">
+            <thead>
+              <tr>
+                <th>#</th><th>Date &amp; Time</th><th>Type</th>
+                <th>Students</th><th>Avg Attention</th><th>Alerts</th><th>Duration</th>
+              </tr>
+            </thead>
+            <tbody id="sessionTableBody">
+              <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:32px;">No sessions recorded yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="js/logger.js"></script>
+<script src="js/app.js"></script>
+<script src="js/charts.js"></script>
+<script>
+  function loadStats() {
+    const sessions = Store.get('sessions', []);
+
+    if (!sessions.length) {
+      document.getElementById('noDataMsg').style.display = 'block';
+      document.getElementById('statsContent').style.display = 'none';
+      return;
+    }
+
+    document.getElementById('noDataMsg').style.display = 'none';
+    document.getElementById('statsContent').style.display = 'block';
+
+    // KPIs
+    document.getElementById('totalSessions').textContent = sessions.length;
+    const attVals  = sessions.map(s => s.avgAttention).filter(v => v != null);
+    const overall  = attVals.length ? Math.round(attVals.reduce((a,b)=>a+b,0)/attVals.length) : null;
+    document.getElementById('overallAttention').textContent = overall != null ? overall + '%' : '—';
+    document.getElementById('peakStudents').textContent = Math.max(...sessions.map(s => s.maxStudents || 0));
+    document.getElementById('totalAlerts').textContent   = sessions.reduce((s, x) => s + (x.alerts || 0), 0);
+
+    // Engagement line chart
+    const engLabels = sessions.slice().reverse().map((_, i) => `S${i + 1}`);
+    const engData   = sessions.slice().reverse().map(s => s.avgAttention ?? 0);
+    Charts.engagementLine('engagementChart', engLabels, engData);
+
+    // Behaviour doughnut — aggregate all sessions
+    const allB = {};
+    sessions.forEach(s => {
+      if (s.behaviourCounts) {
+        Object.entries(s.behaviourCounts).forEach(([k, v]) => {
+          allB[k] = (allB[k] || 0) + v;
+        });
+      }
+    });
+    if (Object.keys(allB).length) Charts.behaviourDoughnut('behaviourChart', allB);
+
+    // Table
+    const tbody = document.getElementById('sessionTableBody');
+    tbody.innerHTML = sessions.map((s, i) => {
+      const d = new Date(s.date || s.id);
+      const typeIcon = s.type === 'camera' ? '🎥' : '📡';
+      return `<tr>
+        <td style="color:var(--text-muted);">${sessions.length - i}</td>
+        <td>${d.toLocaleDateString('en-KE')} ${d.toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'})}</td>
+        <td>${typeIcon} ${s.type === 'camera' ? 'Live Camera' : 'Video Upload'}</td>
+        <td>${s.maxStudents ?? '—'}</td>
+        <td>${s.avgAttention != null ? '<span class="text-green fw-bold">' + s.avgAttention + '%</span>' : '—'}</td>
+        <td>${s.alerts != null ? (s.alerts > 0 ? '<span class="text-red fw-bold">'+s.alerts+'</span>' : '0') : '—'}</td>
+        <td>${s.duration != null ? fmtDuration(s.duration) : '—'}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function clearSessions() {
+    if (!confirm('Clear all session history? This cannot be undone.')) return;
+    Store.set('sessions', []);
+    Store.set('event_log', []);
+    showToast('All session data cleared', 'info');
+    loadStats();
+  }
+
+  loadStats();
+</script>
+</body>
+</html>

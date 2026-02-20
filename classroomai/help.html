@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Help — Classroom AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .faq-item {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      margin-bottom: 8px;
+      background: rgba(255,255,255,0.03);
+    }
+    .faq-question {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 18px; cursor: pointer;
+      font-size: 0.92rem; font-weight: 600; color: var(--text-primary);
+      gap: 12px; transition: background 0.2s;
+      user-select: none;
+    }
+    .faq-question:hover { background: rgba(255,255,255,0.04); }
+    .faq-question i.chevron { transition: transform 0.25s; flex-shrink: 0; color: var(--text-muted); }
+    .faq-item.open .faq-question i.chevron { transform: rotate(180deg); }
+    .faq-answer {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.32s ease, padding 0.2s;
+      padding: 0 18px;
+      font-size: 0.88rem; color: var(--text-muted); line-height: 1.75;
+    }
+    .faq-item.open .faq-answer { max-height: 400px; padding: 0 18px 18px; }
+
+    .step-card {
+      display: flex; gap: 18px; align-items: flex-start;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 18px;
+      margin-bottom: 12px;
+    }
+    .step-num {
+      width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--blue-light), var(--cyan));
+      color: white; font-family: var(--font-head);
+      font-size: 0.9rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .shortcut-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .shortcut-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px; background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+    }
+    .shortcut-row span { color: var(--text-muted); }
+    kbd {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 5px; padding: 3px 8px; font-size: 0.78rem;
+      font-family: inherit; color: var(--text-secondary); white-space: nowrap;
+    }
+    @media (max-width:640px) {
+      .shortcut-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <img src="kseflogo.png" alt="KSEF" class="sidebar-brand-logo">
+      <div class="sidebar-brand-text">
+        <span class="sidebar-brand-name">Classroom AI</span>
+        <span class="sidebar-brand-sub">62nd KSEF · 2026</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Monitor</span>
+      <a href="dashboard.html" class="nav-link"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+      <a href="livefeed.html" class="nav-link"><i class="fas fa-broadcast-tower"></i><span>Live Feed</span></a>
+      <a href="cctv_room.html" class="nav-link"><i class="fas fa-video"></i><span>CCTV Room</span></a>
+      <a href="upload.html" class="nav-link"><i class="fas fa-film"></i><span>Video Analysis</span></a>
+      <span class="nav-section-label">Library</span>
+      <a href="videos.html" class="nav-link"><i class="fas fa-photo-video"></i><span>Video Library</span></a>
+      <span class="nav-section-label">Insights</span>
+      <a href="statistics.html" class="nav-link"><i class="fas fa-chart-line"></i><span>Statistics</span></a>
+      <a href="report.html" class="nav-link"><i class="fas fa-file-alt"></i><span>Session Report</span></a>
+      <span class="nav-section-label">System</span>
+      <a href="settings.html" class="nav-link"><i class="fas fa-sliders"></i><span>Settings</span></a>
+      <a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i><span>About</span></a>
+      <a href="help.html" class="nav-link"><i class="fas fa-circle-question"></i><span>Help</span></a>
+    </nav>
+    <div class="sidebar-footer">Precious Lydiah &amp; Shirleen Wambui<br>Maryhill Girls High School</div>
+  </aside>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <button class="topbar-toggle topbar-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <h1 class="topbar-title">Help &amp; User Guide</h1>
+    <div class="topbar-actions">
+      <span id="topbarClock" style="font-size:0.82rem;color:var(--text-muted);font-variant-numeric:tabular-nums;"></span>
+      <button class="topbar-btn" id="darkModeToggle"><i id="darkModeIcon" class="fas fa-moon"></i></button>
+      <div class="user-chip"><div class="user-avatar">PL</div><span>Precious &amp; Shirleen</span></div>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <!-- Quick start -->
+    <div class="section-title anim-fade-up">
+      <i class="fas fa-play-circle" style="color:var(--cyan);"></i> Quick Start Guide
+    </div>
+    <div class="page-section anim-fade-up anim-delay-1">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div>
+          <div style="font-family:var(--font-head);font-weight:700;margin-bottom:4px;">Open the Application</div>
+          <p style="font-size:0.87rem;color:var(--text-muted);">Navigate to <code style="font-family:monospace;background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px;">http://localhost/classroomai/</code> in Chrome or Edge. The entry splash page will appear. Click <strong>Enter System →</strong> to go to the Dashboard.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div>
+          <div style="font-family:var(--font-head);font-weight:700;margin-bottom:4px;">Start a Live Camera Session</div>
+          <p style="font-size:0.87rem;color:var(--text-muted);">Click <strong>Live Feed</strong> in the sidebar. Click <strong>Start Session</strong>. Allow browser camera and microphone permissions. The AI models will load from CDN &mdash; this takes ~15 seconds the first time, and is instant on subsequent visits (cached). The noise meter and behaviour breakdown update in real time.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div>
+          <div style="font-family:var(--font-head);font-weight:700;margin-bottom:4px;">Watch the AI Overlay</div>
+          <p style="font-size:0.87rem;color:var(--text-muted);">Real-time colour-coded bounding boxes appear on each detected student face with their current behaviour label. The event log below records every behaviour transition. The noise meter shows ambient class noise via the microphone.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div>
+          <div style="font-family:var(--font-head);font-weight:700;margin-bottom:4px;">Save &amp; Review</div>
+          <p style="font-size:0.87rem;color:var(--text-muted);">Click <strong>Stop &amp; Save Session</strong>. The session data is stored locally. Visit <strong>Dashboard</strong> for a summary, <strong>Statistics</strong> for charts, or <strong>Session Report</strong> for a detailed printable report.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">5</div>
+        <div>
+          <div style="font-family:var(--font-head);font-weight:700;margin-bottom:4px;">Analyse a Video</div>
+          <p style="font-size:0.87rem;color:var(--text-muted);">Go to <strong>Video Analysis</strong>. Drag and drop (or browse) a classroom video file (MP4, WebM, MOV). Click <strong>Analyse Video</strong>. The AI will process frame by frame with the same overlay. A summary report is displayed when done.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="section-title anim-fade-up">
+      <i class="fas fa-circle-question" style="color:var(--cyan);"></i> Frequently Asked Questions
+    </div>
+    <div class="page-section anim-fade-up anim-delay-1" id="faqContainer">
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>Why does the camera not work?</span>
+          <i class="fas fa-chevron-down chevron"></i>
+        </div>
+        <div class="faq-answer">
+          Camera access via <code>getUserMedia</code> requires either <strong>localhost</strong> or a <strong>HTTPS</strong> connection. If you open the file directly (file://) or from a plain HTTP domain other than localhost, the browser will block camera access. Run the app through Laragon/XAMPP at <code>http://localhost/classroomai/</code>.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>The AI models take too long to load. What can I do?</span>
+          <i class="fas fa-chevron-down chevron"></i>
+        </div>
+        <div class="faq-answer">
+          AI model weights (~7MB total) are downloaded from the jsDelivr CDN on first use. After the first load, your browser caches them — subsequent loads are instant. Ensure you have a stable internet connection for the first use. If loading fails, check the browser console for network errors and try refreshing.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>Why are some faces not being detected?</span>
+          <i class="fas fa-chevron-down chevron"></i>
+        </div>
+        <div class="faq-answer">
+          Face detection accuracy is affected by: <strong>lighting</strong> (bright, even light works best), <strong>distance</strong> (students too far from the camera may not be detected), <strong>angle</strong> (faces need to be roughly frontal), and <strong>occlusion</strong> (hands covering faces). Try improving classroom lighting and positioning the webcam at the front/centre of the class.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>Can I adjust the AI sensitivity?</span>
+          <i class="fas fa-chevron-down chevron"></i>
+        </div>
+        <div class="faq-answer">
+          Yes — go to <strong>Settings</strong>. The <em>AI Sensitivity</em> slider adjusts the face detection confidence threshold. Increasing sensitivity detects more faces but may produce false positives. The <em>Detection Interval</em> slider controls how often the AI analyses a frame (200ms–1000ms). Shorter intervals use more CPU.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>Is my data sent to any external server?</span>
+          <i class="fas fa-chevron-down chevron"></i>
+        </div>
+        <div class="faq-answer">
+          No. All AI processing happens entirely in your browser using WebGL-accelerated TensorFlow.js. No video frames, images, or biometric data leave your device. Session statistics (behaviour counts, attention percentage) are only stored in your browser's localStorage and optionally in the local PHP backend — never transmitted externally.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>The Suspicious label appears too often. Why?</span>
+          <i class="fas fa-chevron-down chevron"></i>
+        </div>
+        <div class="faq-answer">
+          The <em>Suspicious</em> label is triggered when a student's nose-tip landmark shifts more than 28% from the horizontal face centre — indicating head-turning. This can be a false positive when students look at the blackboard or a neighbouring student for legitimate reasons. Reduce false positives by adjusting the detection angle threshold in the code (<code>js/ai-engine.js</code>) or simply treat Suspicious alerts as conversation-starters rather than definitive flags.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>How do I export session data?</span>
+          <i class="fas fa-chevron-down chevron"></i>
+        </div>
+        <div class="faq-answer">
+          Go to <strong>Settings → Data Management → Export Session Data</strong>. This downloads all sessions as a JSON file. For a single-session printable report, go to <strong>Session Report</strong>, select the session, and use the <em>Print / Export PDF</em> button (uses the browser's built-in Print dialogue — choose "Save as PDF").
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>How do I view error logs?</span>
+          <i class="fas fa-chevron-down chevron"></i>
+        </div>
+        <div class="faq-answer">
+          Open your browser's Developer Console (F12 → Console). All AI events and errors are logged there with colour-coded prefixes. Additionally, all logs are stored in localStorage under the key <code>cai_logs</code> and can be downloaded as JSON by running <code>Logger.exportLogs()</code> in the browser console.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Behaviour reference -->
+    <div class="glass-card page-section anim-fade-up">
+      <div class="card-header"><div class="card-title"><i class="fas fa-tags"></i> Behaviour Label Reference</div></div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Label</th><th>Colour</th><th>Meaning</th><th>Recommended Action</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="behavior-badge attentive">✓ Attentive</span></td><td style="color:#10b981;">Green</td><td style="color:var(--text-muted);">Calm, focused, processing information</td><td style="color:var(--text-muted);">None required</td></tr>
+          <tr><td><span class="behavior-badge engaged">★ Engaged</span></td><td style="color:#06b6d4;">Cyan</td><td style="color:var(--text-muted);">Actively enjoying or interested</td><td style="color:var(--text-muted);">Positive — maintain activity</td></tr>
+          <tr><td><span class="behavior-badge alert-b">! Alert</span></td><td style="color:#3b82f6;">Blue</td><td style="color:var(--text-muted);">Suddenly surprised or alert</td><td style="color:var(--text-muted);">Observe — may need context</td></tr>
+          <tr><td><span class="behavior-badge disengaged">− Disengaged</span></td><td style="color:#f59e0b;">Amber</td><td style="color:var(--text-muted);">Withdrawn, uninvolved</td><td style="color:var(--text-muted);">Check in with student</td></tr>
+          <tr><td><span class="behavior-badge anxious">⚠ Anxious</span></td><td style="color:#f97316;">Orange</td><td style="color:var(--text-muted);">Stressed, fearful, test anxiety</td><td style="color:var(--text-muted);">Offer reassurance</td></tr>
+          <tr><td><span class="behavior-badge disruptive">✗ Disruptive</span></td><td style="color:#ef4444;">Red</td><td style="color:var(--text-muted);">Frustrated, hostile behaviour</td><td style="color:var(--text-muted);">Immediate attention needed</td></tr>
+          <tr><td><span class="behavior-badge confused">? Confused</span></td><td style="color:#8b5cf6;">Purple</td><td style="color:var(--text-muted);">Does not understand content</td><td style="color:var(--text-muted);">Rephrase or re-explain</td></tr>
+          <tr><td><span class="behavior-badge suspicious">👀 Suspicious</span></td><td style="color:#dc2626;">Dark Red</td><td style="color:var(--text-muted);">Looking sideways (head turned)</td><td style="color:var(--text-muted);">Investigate — possible copying</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Keyboard shortcuts -->
+    <div class="glass-card page-section anim-fade-up">
+      <div class="card-header"><div class="card-title"><i class="fas fa-keyboard"></i> Tips &amp; Troubleshooting</div></div>
+      <div class="shortcut-grid">
+        <div class="shortcut-row"><span>Refresh AI models</span><kbd>Ctrl + Shift + R</kbd></div>
+        <div class="shortcut-row"><span>Toggle dark / light mode</span><kbd>Moon icon (topbar)</kbd></div>
+        <div class="shortcut-row"><span>Check error logs</span><kbd>F12 → Console</kbd></div>
+        <div class="shortcut-row"><span>Export logs to JSON</span><kbd>Logger.exportLogs()</kbd></div>
+        <div class="shortcut-row"><span>Stop camera stream</span><kbd>Stop &amp; Save button</kbd></div>
+        <div class="shortcut-row"><span>Clear all session data</span><kbd>Settings → Clear Data</kbd></div>
+        <div class="shortcut-row"><span>View this help page</span><kbd>Sidebar → Help</kbd></div>
+        <div class="shortcut-row"><span>Print session report</span><kbd>Report → Print PDF</kbd></div>
+      </div>
+    </div>
+
+    <!-- Support -->
+    <div class="alert alert-info anim-fade-up">
+      <i class="fas fa-envelope"></i>
+      <span>For further support or to report an issue, contact the project team: <strong>Precious Lydiah &amp; Shirleen Wambui</strong>, Maryhill Girls High School — or visit the <a href="http://ksefproject.com/project-classroom-ai.html" style="color:inherit;text-decoration:underline;">project documentation page</a>.</span>
+    </div>
+
+  </main>
+
+  <footer style="border-top:1px solid var(--border);padding:20px 32px;margin-left:var(--sidebar-w);font-size:0.8rem;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+    <span>Classroom AI &mdash; 62nd KSEF 2026</span>
+    <span>Precious Lydiah &amp; Shirleen Wambui &middot; Maryhill Girls High School</span>
+  </footer>
+</div>
+
+<script src="js/logger.js"></script>
+<script src="js/app.js"></script>
+<script>
+  Logger.info('help', 'Help page loaded');
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-question').addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(o => o.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+</script>
+</body>
+</html>

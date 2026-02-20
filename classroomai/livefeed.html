@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Live Feed — Classroom AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Camera page specifics */
+    .cam-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .cam-video-wrap {
+      position: relative;
+      background: #E9EDEF;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      aspect-ratio: 16/9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #camVideo {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    #camCanvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+
+    .cam-overlay-top {
+      position: absolute;
+      top: 12px; left: 12px; right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+    }
+
+    .cam-status-badge {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255, 255, 255,0.75);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .cam-status-badge.running {
+      border-color: rgba(16,185,129,0.4);
+      color: var(--green-light);
+    }
+
+    .cam-stat {
+      background: rgba(255, 255, 255,0.75);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 5px 12px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .cam-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      color: var(--text-muted);
+    }
+    .cam-placeholder i { font-size: 3.5rem; opacity: 0.25; }
+    .cam-placeholder p { font-size: 0.9rem; }
+
+    /* Right panel */
+    .cam-panel { display: flex; flex-direction: column; gap: 16px; }
+
+    /* Student list */
+    .student-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    /* Model loading overlay */
+    #modelLoadingWrap {
+      position: absolute; inset: 0;
+      background: rgba(255, 255, 255,0.88);
+      backdrop-filter: blur(6px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      z-index: 20;
+      border-radius: var(--radius-md);
+    }
+    #modelLoadingWrap.show { display: flex; }
+    #modelStatus { font-size: 0.88rem; color: var(--text-secondary); }
+
+    @media (max-width: 900px) {
+      .cam-layout { grid-template-columns: 1fr; }
+      .cam-panel  { flex-direction: row; flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <img src="kseflogo.png" alt="KSEF" class="sidebar-brand-logo">
+      <div class="sidebar-brand-text">
+        <span class="sidebar-brand-name">Classroom AI</span>
+      <span class="sidebar-brand-sub">62nd KSEF · 2026</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Monitor</span>
+      <a href="dashboard.html" class="nav-link"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+      <a href="livefeed.html" class="nav-link"><i class="fas fa-broadcast-tower"></i><span>Live Feed</span></a>
+      <a href="cctv_room.html" class="nav-link"><i class="fas fa-video"></i><span>CCTV Room</span></a>
+      <a href="upload.html" class="nav-link"><i class="fas fa-film"></i><span>Video Analysis</span></a>
+      <span class="nav-section-label">Library</span>
+      <a href="videos.html" class="nav-link"><i class="fas fa-photo-video"></i><span>Video Library</span></a>
+      <span class="nav-section-label">Insights</span>
+      <a href="statistics.html" class="nav-link"><i class="fas fa-chart-line"></i><span>Statistics</span></a>
+      <a href="report.html" class="nav-link"><i class="fas fa-file-alt"></i><span>Session Report</span></a>
+      <span class="nav-section-label">System</span>
+      <a href="settings.html" class="nav-link"><i class="fas fa-sliders"></i><span>Settings</span></a>
+      <a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i><span>About</span></a>
+      <a href="help.html" class="nav-link"><i class="fas fa-circle-question"></i><span>Help</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      Precious Lydiah &amp; Shirleen Wambui<br>Maryhill Girls High School
+    </div>
+  </aside>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <button class="topbar-toggle topbar-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <h1 class="topbar-title">Live Feed</h1>
+    <div class="topbar-actions">
+      <div class="live-indicator" id="liveIndicator" style="display:none;">
+        <div class="live-dot"></div> LIVE
+      </div>
+      <span id="topbarClock" style="font-size:0.82rem;color:var(--text-muted);font-variant-numeric:tabular-nums;"></span>
+      
+      <div class="user-chip"><div class="user-avatar">PL</div><span>Precious &amp; Shirleen</span></div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="main-content">
+
+    <!-- Controls row -->
+    <div class="flex items-center gap-12 mb-16" style="flex-wrap:wrap;">
+      <button class="btn btn-primary" id="startBtn">
+        <i class="fas fa-play"></i> Start Camera
+      </button>
+      <button class="btn btn-danger" id="stopBtn" disabled>
+        <i class="fas fa-stop"></i> Stop &amp; Save
+      </button>
+      <button class="btn btn-ghost" id="snapshotBtn" disabled>
+        <i class="fas fa-camera"></i> Snapshot
+      </button>
+      <div style="flex:1;"></div>
+      <div style="font-size:0.82rem;color:var(--text-muted);">
+        Session: <span id="sessionTimer" style="font-variant-numeric:tabular-nums;color:var(--text-primary);font-weight:600;">00:00</span>
+      </div>
+    </div>
+
+    <!-- Camera layout -->
+    <div class="cam-layout">
+
+      <!-- Left: video feed -->
+      <div>
+        <div class="cam-video-wrap" id="videoWrap">
+          <!-- placeholder -->
+          <div class="cam-placeholder" id="placeholder">
+            <i class="fas fa-video-slash"></i>
+            <p>Click <strong>Start Camera</strong> to begin AI monitoring</p>
+          </div>
+
+          <!-- Model loading overlay -->
+          <div id="modelLoadingWrap">
+            <div class="spinner"></div>
+            <div id="modelStatus">Initialising AI models…</div>
+            <div style="width:240px;">
+              <div class="model-loading-bar"><div class="model-loading-fill"></div></div>
+            </div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">First load may take ~15 seconds</div>
+          </div>
+
+          <video id="camVideo" autoplay muted playsinline></video>
+          <canvas id="camCanvas"></canvas>
+
+          <!-- Top overlay info -->
+          <div class="cam-overlay-top" id="camOverlayTop" style="display:none;">
+            <div class="cam-status-badge running">
+              <div class="live-dot"></div> AI Analysing
+            </div>
+            <div class="cam-stat" id="overlayStudentCount">0 students</div>
+          </div>
+        </div>
+
+        <!-- Meters row -->
+        <div class="glass-card mt-16">
+          <div class="grid-3" style="gap:24px;">
+            <div>
+              <div class="meter-wrap">
+                <div class="meter-label"><span>Class Attention</span><span id="attentionVal">—</span></div>
+                <div class="meter-track"><div class="meter-fill cyan" id="attentionMeter" style="width:0%"></div></div>
+              </div>
+            </div>
+            <div>
+              <div class="meter-wrap">
+                <div class="meter-label"><span>Noise Level</span><span id="noiseVal">—</span></div>
+                <div class="meter-track"><div class="meter-fill red" id="noiseMeter" style="width:0%"></div></div>
+              </div>
+            </div>
+            <div>
+              <div class="meter-wrap">
+                <div class="meter-label"><span>Alert Score</span><span id="alertVal">—</span></div>
+                <div class="meter-track"><div class="meter-fill amber" id="alertMeter" style="width:0%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right panel -->
+      <div class="cam-panel">
+
+        <!-- Students detected -->
+        <div class="glass-card">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-users"></i> Students</div>
+            <div style="font-family:var(--font-head);font-size:1.4rem;font-weight:700;" id="studentCountBadge">0</div>
+          </div>
+          <div class="student-list" id="studentList">
+            <div class="empty-state" style="padding:20px 0;"><i class="fas fa-user-slash"></i><p>No faces detected</p></div>
+          </div>
+        </div>
+
+        <!-- Behaviour counts -->
+        <div class="glass-card">
+          <div class="card-title mb-16"><i class="fas fa-chart-bar"></i> Behaviour Counts</div>
+          <div id="behaviourCounts">
+            <div class="text-muted" style="font-size:0.82rem;text-align:center;padding:16px 0;">Start session to see data</div>
+          </div>
+        </div>
+
+        <!-- Event log -->
+        <div class="glass-card" style="flex:1;">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-list"></i> Event Log</div>
+          </div>
+          <div class="event-log" id="camEventLog" style="max-height:200px;"></div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- face-api.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+<script src="js/logger.js"></script>
+<script src="js/app.js"></script>
+<script src="js/ai-engine.js"></script>
+<script>
+  // Preload models
+  (async function preload() {
+    if (!AIEngine.modelsLoaded) {
+      document.getElementById('modelLoadingWrap').classList.add('show');
+      document.getElementById('modelStatus').textContent = 'Pre-loading AI Models...';
+      AIEngine.loadModels((msg) => { 
+        document.getElementById('modelStatus').textContent = msg; 
+      }).then(() => {
+        document.getElementById('modelLoadingWrap').classList.remove('show');
+      }).catch(e => console.error(e));
+    }
+  })();
+
+  // ── DOM refs ──
+  const startBtn          = document.getElementById('startBtn');
+  const stopBtn           = document.getElementById('stopBtn');
+  const snapshotBtn       = document.getElementById('snapshotBtn');
+  const camVideo          = document.getElementById('camVideo');
+  const camCanvas         = document.getElementById('camCanvas');
+  const placeholder       = document.getElementById('placeholder');
+  const modelLoadingWrap  = document.getElementById('modelLoadingWrap');
+  const modelStatus       = document.getElementById('modelStatus');
+  const liveIndicator     = document.getElementById('liveIndicator');
+  const camOverlayTop     = document.getElementById('camOverlayTop');
+  const overlayStudentCount = document.getElementById('overlayStudentCount');
+  const scoreEl  = { attention: document.getElementById('attentionVal'), noise: document.getElementById('noiseVal'), alert: document.getElementById('alertVal') };
+  const meterEl  = { attention: document.getElementById('attentionMeter'), noise: document.getElementById('noiseMeter'), alert: document.getElementById('alertMeter') };
+  const studentList      = document.getElementById('studentList');
+  const studentCountBadge= document.getElementById('studentCountBadge');
+  const behaviourCounts  = document.getElementById('behaviourCounts');
+  const timerEl          = document.getElementById('sessionTimer');
+  const camEventLog      = document.getElementById('camEventLog');
+
+  // ── Session state ──
+  let stream = null;
+  let audioCtx = null;
+  let analyser = null;
+  let sessionStart = null;
+  let timerInterval = null;
+  let noiseRafId = null;
+  const sessionBehaviourCounts = {};
+  const sessionLog = [];
+  let maxStudents = 0;
+  let attentionSamples = [];
+
+  // ── Helpers ──
+  function setMeter(key, pct) {
+    meterEl[key].style.width = pct + '%';
+    scoreEl[key].textContent = Math.round(pct) + '%';
+  }
+
+  function addLogEntry(text, severity = 0) {
+    const dotC = ['green','cyan','amber','red'][Math.min(severity,3)];
+    const entry = { text, severity, timestamp: Date.now() };
+    sessionLog.unshift(entry);
+
+    const li = document.createElement('div');
+    li.className = 'log-item';
+    li.innerHTML = `<div class="log-dot ${dotC}"></div><div class="log-body"><div class="log-text">${text}</div><div class="log-time">${fmtTime(Date.now())}</div></div>`;
+    if (camEventLog.firstChild?.classList?.contains('empty-state')) camEventLog.innerHTML = '';
+    camEventLog.prepend(li);
+    if (camEventLog.children.length > 30) camEventLog.lastChild?.remove();
+
+    // Also push to global store
+    Store.push('event_log', entry);
+  }
+
+  // ── Camera start/stop ──
+  startBtn.addEventListener('click', async () => {
+    startBtn.disabled = true;
+    placeholder.style.display = 'none';
+    modelLoadingWrap.classList.add('show');
+
+    try {
+      // Load AI models
+      await AIEngine.loadModels((msg, pct) => { modelStatus.textContent = msg; });
+      modelLoadingWrap.classList.remove('show');
+    } catch (e) {
+      modelStatus.textContent = 'Failed to load models. Check internet connection.';
+      console.error(e);
+      startBtn.disabled = false;
+      return;
+    }
+
+    // Get camera + mic
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    } catch (e) {
+      showToast('Camera access denied. Please allow camera permissions.', 'error');
+      startBtn.disabled = false;
+      modelLoadingWrap.classList.remove('show');
+      placeholder.style.display = 'flex';
+      return;
+    }
+
+    camVideo.srcObject = stream;
+    await camVideo.play().catch(()=>{});
+
+    // Noise via AudioContext
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 256;
+      const mic = audioCtx.createMediaStreamSource(stream);
+      mic.connect(analyser);
+      const data = new Uint8Array(analyser.frequencyBinCount);
+      const noiseLoop = () => {
+        analyser.getByteFrequencyData(data);
+        const noise = Math.min(100, Math.max(...data) / 1.28);
+        setMeter('noise', noise);
+        noiseRafId = requestAnimationFrame(noiseLoop);
+      };
+      noiseRafId = requestAnimationFrame(noiseLoop);
+    } catch(_) {}
+
+    // Start AI loop
+    AIEngine.start(camVideo, camCanvas, {
+      interval: parseInt(getSetting('detection_interval')) || 400,
+
+      onDetect(results) {
+        // Student count
+        const count = results.length;
+        maxStudents = Math.max(maxStudents, count);
+        studentCountBadge.textContent = count;
+        overlayStudentCount.textContent = `${count} student${count !== 1 ? 's' : ''}`;
+
+        // Attention
+        const att = AIEngine.computeAttentionScore(results);
+        attentionSamples.push(att);
+        setMeter('attention', att);
+
+        // Alert score (proportion of high-severity)
+        const alertPct = results.length
+          ? Math.round(results.filter(r => r.behaviour.severity >= 2).length / results.length * 100)
+          : 0;
+        setMeter('alert', alertPct);
+
+        // Update student list
+        if (results.length === 0) {
+          studentList.innerHTML = '<div class="empty-state" style="padding:20px 0;"><i class="fas fa-user-slash"></i><p>No faces detected</p></div>';
+        } else {
+          studentList.innerHTML = results.map((r, i) => {
+            const b = r.behaviour;
+            const conf = r.expressions ? Math.round(Math.max(...Object.values(r.expressions)) * 100) : '—';
+            return `<div class="detection-card">
+              <div class="detection-avatar">S${i+1}</div>
+              <div class="detection-info">
+                <div class="detection-name">Student ${i+1}</div>
+                <div class="detection-score">Conf: ${conf}%</div>
+              </div>
+              <span class="behavior-badge ${b.badge}">${b.icon} ${b.label}</span>
+            </div>`;
+          }).join('');
+        }
+
+        // Behaviour count tracker
+        results.forEach(r => {
+          const lbl = r.behaviour.label;
+          sessionBehaviourCounts[lbl] = (sessionBehaviourCounts[lbl] || 0) + 1;
+        });
+        updateBehaviourCounts();
+      },
+
+      onLog(entry) {
+        const msg = entry.prev
+          ? `Student ${entry.id.slice(1)}: ${entry.prev} → <strong style="color:${entry.behaviour.color}">${entry.current}</strong>`
+          : `Student ${entry.id.slice(1)} detected — ${entry.current}`;
+        addLogEntry(msg, entry.severity);
+      }
+    });
+
+    // Timer
+    sessionStart = Date.now();
+    timerInterval = setInterval(() => {
+      const elapsed = Date.now() - sessionStart;
+      const m = Math.floor(elapsed / 60000).toString().padStart(2,'0');
+      const s = Math.floor((elapsed % 60000)/1000).toString().padStart(2,'0');
+      timerEl.textContent = `${m}:${s}`;
+    }, 1000);
+
+    // UI state
+    stopBtn.disabled = false;
+    snapshotBtn.disabled = false;
+    liveIndicator.style.display = 'flex';
+    camOverlayTop.style.display = 'flex';
+    addLogEntry('🟢 Camera session started', 0);
+  });
+
+  stopBtn.addEventListener('click', () => {
+    AIEngine.stop();
+    clearInterval(timerInterval);
+    cancelAnimationFrame(noiseRafId);
+
+    // Stop tracks
+    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+    if (audioCtx) { audioCtx.close(); audioCtx = null; }
+
+    // Save session
+    const duration = Date.now() - sessionStart;
+    const avgAttention = attentionSamples.length
+      ? Math.round(attentionSamples.reduce((s,v)=>s+v,0) / attentionSamples.length)
+      : 0;
+    const alerts = Object.entries(sessionBehaviourCounts)
+      .filter(([k]) => ['Disruptive','Suspicious'].includes(k))
+      .reduce((s,[,v]) => s+v, 0);
+
+    AIEngine.saveSession({
+      type: 'camera',
+      maxStudents,
+      avgAttention,
+      alerts,
+      duration,
+      behaviourCounts: { ...sessionBehaviourCounts },
+      log: sessionLog.slice(0, 50),
+    });
+
+    showToast('Session saved to dashboard', 'success');
+    addLogEntry('🔴 Camera session ended & saved', 0);
+
+    // Reset UI
+    camVideo.srcObject = null;
+    const ctx = camCanvas.getContext('2d');
+    ctx.clearRect(0, 0, camCanvas.width, camCanvas.height);
+    placeholder.style.display = 'flex';
+    liveIndicator.style.display = 'none';
+    camOverlayTop.style.display = 'none';
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+    snapshotBtn.disabled = true;
+    studentCountBadge.textContent = '0';
+    setMeter('attention', 0); setMeter('noise', 0); setMeter('alert', 0);
+    scoreEl.attention.textContent = '—'; scoreEl.noise.textContent = '—'; scoreEl.alert.textContent = '—';
+    timerEl.textContent = '00:00';
+
+    // Reset counters
+    attentionSamples = [];
+    maxStudents = 0;
+    Object.keys(sessionBehaviourCounts).forEach(k => delete sessionBehaviourCounts[k]);
+    studentList.innerHTML = '<div class="empty-state" style="padding:20px 0;"><i class="fas fa-user-slash"></i><p>No faces detected</p></div>';
+    behaviourCounts.innerHTML = '<div class="text-muted" style="font-size:0.82rem;text-align:center;padding:16px 0;">Start session to see data</div>';
+  });
+
+  // Snapshot
+  snapshotBtn.addEventListener('click', () => {
+    const sc = document.createElement('canvas');
+    sc.width = camVideo.videoWidth; sc.height = camVideo.videoHeight;
+    const sctx = sc.getContext('2d');
+    sctx.drawImage(camVideo, 0, 0);
+    sctx.drawImage(camCanvas, 0, 0);
+    sc.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `snapshot_${Date.now()}.png`; a.click();
+      URL.revokeObjectURL(url);
+    });
+    showToast('Snapshot saved', 'success');
+  });
+
+  function updateBehaviourCounts() {
+    const total = Object.values(sessionBehaviourCounts).reduce((s,v)=>s+v,0);
+    if (!total) return;
+    const badgeMap = { 'Attentive':'attentive','Engaged':'engaged','Alert':'alert-b','Disengaged':'disengaged','Anxious':'anxious','Disruptive':'disruptive','Suspicious':'suspicious','Confused':'confused' };
+    behaviourCounts.innerHTML = Object.entries(sessionBehaviourCounts)
+      .sort(([,a],[,b])=>b-a)
+      .map(([lbl, cnt]) => {
+        const pct = Math.round(cnt/total*100);
+        const b = badgeMap[lbl] || 'attentive';
+        return `<div class="flex items-center justify-between gap-8" style="margin-bottom:8px;">
+          <span class="behavior-badge ${b}" style="font-size:0.72rem;padding:3px 8px;">${lbl}</span>
+          <span style="font-size:0.78rem;color:var(--text-muted);min-width:52px;text-align:right;">${pct}%</span>
+        </div>`;
+      }).join('');
+  }
+</script>
+</body>
+</html>

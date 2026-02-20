@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Classroom AI — 62nd KSEF</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --blue: #1d4ed8;
+        --cyan: #06b6d4;
+        --gold: #f59e0b;
+        --bg: #060c1a;
+        --text: #f1f5f9;
+        --muted: #94a3b8;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      /* Animated background */
+      .bg-gradient {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background:
+          radial-gradient(
+            ellipse 130% 100% at 50% -20%,
+            rgba(29, 78, 216, 0.22),
+            transparent 60%
+          ),
+          radial-gradient(
+            ellipse 80% 70% at 90% 110%,
+            rgba(6, 182, 212, 0.1),
+            transparent 55%
+          ),
+          var(--bg);
+      }
+
+      .bg-grid {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background-image:
+          linear-gradient(rgba(29, 78, 216, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(29, 78, 216, 0.08) 1px, transparent 1px);
+        background-size: 64px 64px;
+        animation: gridScroll 28s linear infinite;
+      }
+
+      @keyframes gridScroll {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: 64px 64px;
+        }
+      }
+
+      /* Floating orbs */
+      .orb {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(80px);
+        z-index: 0;
+        pointer-events: none;
+      }
+      .orb-1 {
+        width: 380px;
+        height: 380px;
+        background: rgba(29, 78, 216, 0.18);
+        top: -10%;
+        left: -8%;
+        animation: driftA 18s ease-in-out infinite;
+      }
+      .orb-2 {
+        width: 280px;
+        height: 280px;
+        background: rgba(6, 182, 212, 0.12);
+        bottom: -8%;
+        right: -5%;
+        animation: driftB 22s ease-in-out infinite;
+      }
+      .orb-3 {
+        width: 200px;
+        height: 200px;
+        background: rgba(139, 92, 246, 0.1);
+        top: 40%;
+        right: 15%;
+        animation: driftA 15s ease-in-out infinite reverse;
+      }
+
+      @keyframes driftA {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(30px, 20px);
+        }
+      }
+      @keyframes driftB {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(-20px, 30px);
+        }
+      }
+
+      /* Main card */
+      .entry-card {
+        position: relative;
+        z-index: 10;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 28px;
+        padding: 52px 60px;
+        max-width: 560px;
+        width: 90%;
+        text-align: center;
+        backdrop-filter: blur(20px);
+        box-shadow:
+          0 32px 80px rgba(0, 0, 0, 0.5),
+          0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+        animation: cardIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+
+      @keyframes cardIn {
+        from {
+          opacity: 0;
+          transform: translateY(40px) scale(0.97);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      /* KSEF Badge */
+      .edition-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(245, 158, 11, 0.12);
+        border: 1px solid rgba(245, 158, 11, 0.28);
+        border-radius: 999px;
+        padding: 6px 18px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #fcd34d;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin-bottom: 28px;
+        animation: fadeUp 0.6s 0.2s ease both;
+      }
+
+      /* Logo */
+      .logo-wrap {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin: 0 auto 28px;
+        animation: fadeUp 0.6s 0.3s ease both;
+      }
+
+      .logo-glow-ring {
+        position: absolute;
+        inset: -12px;
+        border-radius: 50%;
+        border: 2px solid rgba(29, 78, 216, 0.35);
+        animation: glowRingPulse 3s ease-in-out infinite;
+      }
+
+      .logo-glow-ring2 {
+        position: absolute;
+        inset: -24px;
+        border-radius: 50%;
+        border: 1px solid rgba(6, 182, 212, 0.18);
+        animation: glowRingPulse 3s ease-in-out infinite 0.5s;
+      }
+
+      @keyframes glowRingPulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.5;
+          transform: scale(1.04);
+        }
+      }
+
+      .logo-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        position: relative;
+        z-index: 1;
+        filter: drop-shadow(0 0 24px rgba(29, 78, 216, 0.5))
+          drop-shadow(0 0 8px rgba(6, 182, 212, 0.3));
+        animation: logoFloat 6s ease-in-out infinite;
+      }
+
+      @keyframes logoFloat {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      /* Titles */
+      .project-title {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 2.6rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+        background: linear-gradient(135deg, #f1f5f9 30%, var(--cyan));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+        animation: fadeUp 0.6s 0.4s ease both;
+      }
+
+      .project-subtitle {
+        font-size: 1.05rem;
+        font-weight: 500;
+        color: var(--cyan);
+        letter-spacing: 0.04em;
+        margin-bottom: 32px;
+        animation: fadeUp 0.6s 0.5s ease both;
+      }
+
+      /* Divider */
+      .divider {
+        border: none;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        margin: 24px 0;
+      }
+
+      /* Presenters box */
+      .presenters-box {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 16px;
+        padding: 20px 24px;
+        margin-bottom: 32px;
+        animation: fadeUp 0.6s 0.6s ease both;
+      }
+
+      .presenters-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        margin-bottom: 14px;
+      }
+
+      .presenter-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 0;
+      }
+
+      .presenter-row + .presenter-row {
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .presenter-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--blue), var(--cyan));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: white;
+        flex-shrink: 0;
+      }
+
+      .presenter-name {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text);
+        text-align: left;
+      }
+
+      /* Enter button */
+      .enter-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: linear-gradient(
+          135deg,
+          var(--blue),
+          #2563eb 60%,
+          rgba(6, 182, 212, 0.8)
+        );
+        color: white;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1.05rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        padding: 16px 40px;
+        border-radius: 14px;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.25s ease;
+        box-shadow:
+          0 8px 32px rgba(29, 78, 216, 0.35),
+          0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+        animation: fadeUp 0.6s 0.7s ease both;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .enter-btn::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        opacity: 0;
+        transition: opacity 0.25s;
+      }
+
+      .enter-btn:hover {
+        transform: translateY(-3px);
+        box-shadow:
+          0 16px 48px rgba(29, 78, 216, 0.5),
+          0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+      }
+      .enter-btn:hover::before {
+        opacity: 1;
+      }
+      .enter-btn:active {
+        transform: translateY(-1px);
+      }
+
+      .enter-btn i {
+        font-size: 0.9rem;
+        transition: transform 0.25s;
+      }
+      .enter-btn:hover i {
+        transform: translateX(5px);
+      }
+
+      /* Footer note */
+      .entry-footer {
+        margin-top: 28px;
+        font-size: 0.76rem;
+        color: var(--muted);
+        animation: fadeUp 0.6s 0.8s ease both;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-gradient"></div>
+    <div class="bg-grid"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="entry-card">
+      <!-- Edition badge -->
+      <div class="edition-badge">
+        <i class="fas fa-star"></i>
+        62nd Edition · KSEF 2025
+      </div>
+
+      <!-- Logo -->
+      <div class="logo-wrap">
+        <div class="logo-glow-ring2"></div>
+        <div class="logo-glow-ring"></div>
+        <img src="kseflogo.png" alt="Kenya Science and Engineering Fair Logo" />
+      </div>
+
+      <!-- Titles -->
+      <h1 class="project-title">Classroom AI</h1>
+      <p class="project-subtitle">
+        <i class="fas fa-brain" style="margin-right: 6px"></i>
+        Behavioural Science
+      </p>
+
+      <div class="divider"></div>
+
+      <!-- Presenters -->
+      <div class="presenters-box">
+        <div class="presenters-label">
+          <i class="fas fa-users" style="margin-right: 6px"></i>
+          Presented By
+        </div>
+        <div class="presenter-row">
+          <div class="presenter-avatar">PL</div>
+          <div class="presenter-name">Precious Lydiah</div>
+        </div>
+        <div class="presenter-row">
+          <div class="presenter-avatar">SW</div>
+          <div class="presenter-name">Shirleen Wambui</div>
+        </div>
+      </div>
+
+      <!-- Enter button -->
+      <a href="dashboard.html" class="enter-btn">
+        Enter System
+        <i class="fas fa-arrow-right"></i>
+      </a>
+
+      <!-- Footer -->
+      <p class="entry-footer">
+        Kenya Science &amp; Engineering Fair &nbsp;·&nbsp; AI-Powered Classroom
+        Behaviour Monitoring
+      </p>
+    </div>
+  </body>
+</html>

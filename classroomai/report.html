@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Session Report — Classroom AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    .report-select-bar {
+      display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+      background:rgba(255,255,255,0.03);
+      border:1px solid var(--border); border-radius:var(--radius-md);
+      padding:16px 20px; margin-bottom:28px;
+    }
+    .report-select-label { font-size:0.82rem; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; }
+    .report-kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+    .report-kpi {
+      background:rgba(255,255,255,0.04); border:1px solid var(--border);
+      border-radius:var(--radius-sm); padding:18px;
+      text-align:center;
+    }
+    .report-kpi-val { font-family:var(--font-head); font-size:1.8rem; font-weight:700; color:var(--text-primary); }
+    .report-kpi-label { font-size:0.78rem; color:var(--text-muted); margin-top:4px; text-transform:uppercase; letter-spacing:0.05em; }
+    .print-btn {
+      margin-left:auto; display:flex; align-items:center; gap:8px;
+      padding:9px 18px; background:var(--blue-light); color:white;
+      border:none; border-radius:var(--radius-sm); font-size:0.85rem; font-weight:600;
+      cursor:pointer; transition:opacity 0.2s;
+    }
+    .print-btn:hover { opacity:0.85; }
+    @media(max-width:900px) { .report-kpi-row{grid-template-columns:1fr 1fr;} }
+    @media(max-width:600px) { .report-kpi-row{grid-template-columns:1fr;} }
+    @media print {
+      .sidebar, .topbar, .report-select-bar, .print-btn { display:none !important; }
+      .main-content { margin-left:0 !important; }
+      body { background:white; color:#111; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <img src="kseflogo.png" alt="KSEF" class="sidebar-brand-logo">
+      <div class="sidebar-brand-text">
+        <span class="sidebar-brand-name">Classroom AI</span>
+        <span class="sidebar-brand-sub">62nd KSEF · 2026</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Monitor</span>
+      <a href="dashboard.html" class="nav-link"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+      <a href="livefeed.html" class="nav-link"><i class="fas fa-broadcast-tower"></i><span>Live Feed</span></a>
+      <a href="cctv_room.html" class="nav-link"><i class="fas fa-video"></i><span>CCTV Room</span></a>
+      <a href="upload.html" class="nav-link"><i class="fas fa-film"></i><span>Video Analysis</span></a>
+      <span class="nav-section-label">Library</span>
+      <a href="videos.html" class="nav-link"><i class="fas fa-photo-video"></i><span>Video Library</span></a>
+      <span class="nav-section-label">Insights</span>
+      <a href="statistics.html" class="nav-link"><i class="fas fa-chart-line"></i><span>Statistics</span></a>
+      <a href="report.html" class="nav-link"><i class="fas fa-file-alt"></i><span>Session Report</span></a>
+      <span class="nav-section-label">System</span>
+      <a href="settings.html" class="nav-link"><i class="fas fa-sliders"></i><span>Settings</span></a>
+      <a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i><span>About</span></a>
+      <a href="help.html" class="nav-link"><i class="fas fa-circle-question"></i><span>Help</span></a>
+    </nav>
+    <div class="sidebar-footer">Precious Lydiah &amp; Shirleen Wambui<br>Maryhill Girls High School</div>
+  </aside>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <button class="topbar-toggle topbar-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <h1 class="topbar-title">Session Report</h1>
+    <div class="topbar-actions">
+      <span id="topbarClock" style="font-size:0.82rem;color:var(--text-muted);font-variant-numeric:tabular-nums;"></span>
+      <button class="topbar-btn" id="darkModeToggle"><i id="darkModeIcon" class="fas fa-moon"></i></button>
+      <div class="user-chip"><div class="user-avatar">PL</div><span>Precious &amp; Shirleen</span></div>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <!-- Session selector -->
+    <div class="report-select-bar">
+      <span class="report-select-label"><i class="fas fa-calendar" style="margin-right:6px;"></i>Session</span>
+      <select class="form-control" id="sessionSelect" style="max-width:360px;">
+        <option value="">— Select a session —</option>
+      </select>
+      <button class="print-btn" id="printBtn" onclick="window.print()">
+        <i class="fas fa-print"></i> Print / Export PDF
+      </button>
+    </div>
+
+    <!-- No session placeholder -->
+    <div id="noSession" class="glass-card">
+      <div class="empty-state">
+        <i class="fas fa-file-circle-question"></i>
+        <p>Select a session above to view its detailed report.<br>Run a camera or video session first if you have no sessions yet.</p>
+      </div>
+    </div>
+
+    <!-- Report content -->
+    <div id="reportContent" style="display:none;">
+
+      <!-- KPI row -->
+      <div class="report-kpi-row" id="reportKPIs"></div>
+
+      <!-- Charts -->
+      <div class="grid-2 page-section">
+        <div class="glass-card">
+          <div class="card-header"><div class="card-title"><i class="fas fa-chart-donut"></i> Behaviour Distribution</div></div>
+          <div style="max-width:320px;margin:0 auto;padding:16px 0;">
+            <canvas id="reportDoughnut"></canvas>
+          </div>
+        </div>
+        <div class="glass-card">
+          <div class="card-header"><div class="card-title"><i class="fas fa-chart-bar"></i> Behaviour Counts</div></div>
+          <div style="padding:16px 0;">
+            <canvas id="reportBar" style="max-height:260px;"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event log table -->
+      <div class="glass-card page-section">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-list-check"></i> Event Log</div>
+          <span id="eventLogCount" style="font-size:0.8rem;color:var(--text-muted);"></span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="eventLogTable">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Student</th>
+                <th>Previous</th>
+                <th>Current Behaviour</th>
+                <th>Severity</th>
+              </tr>
+            </thead>
+            <tbody id="eventLogBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer style="border-top:1px solid var(--border);padding:20px 32px;margin-left:var(--sidebar-w);font-size:0.8rem;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+    <span>Classroom AI &mdash; 62nd KSEF 2026</span>
+    <span>Precious Lydiah &amp; Shirleen Wambui &middot; Maryhill Girls High School</span>
+  </footer>
+</div>
+
+<script src="js/logger.js"></script>
+<script src="js/app.js"></script>
+<script>
+  Logger.info('report', 'Session report page loaded');
+
+  const CHART_COLORS = {
+    Attentive:  '#10b981', Engaged:   '#06b6d4', Alert:     '#3b82f6',
+    Disengaged: '#f59e0b', Anxious:   '#f97316', Disruptive:'#ef4444',
+    Confused:   '#8b5cf6', Suspicious:'#dc2626',
+  };
+
+  const sessions = Store.get('sessions', []);
+  const select   = document.getElementById('sessionSelect');
+  let chartInstances = {};
+
+  // Populate session dropdown
+  sessions.forEach((s, i) => {
+    const icon = s.type === 'camera' ? '📷' : s.type === 'live' ? '📡' : '🎬';
+    const label = `${icon} ${new Date(s.date || s.start).toLocaleString('en-KE')} — ${s.maxStudents ?? '?'} students`;
+    select.innerHTML += `<option value="${i}">${label}</option>`;
+  });
+
+  select.addEventListener('change', () => {
+    if (select.value === '') {
+      document.getElementById('noSession').style.display = '';
+      document.getElementById('reportContent').style.display = 'none';
+      return;
+    }
+    renderReport(sessions[parseInt(select.value)]);
+  });
+
+  function destroyCharts() {
+    Object.values(chartInstances).forEach(c => { try { c.destroy(); } catch(e) {} });
+    chartInstances = {};
+  }
+
+  function renderReport(s) {
+    Logger.debug('report', 'Rendering report', { sessionId: s.id });
+    destroyCharts();
+    document.getElementById('noSession').style.display = 'none';
+    document.getElementById('reportContent').style.display = '';
+
+    // KPIs
+    const duration = s.end ? s.end - s.start : s.duration;
+    const kpiEl = document.getElementById('reportKPIs');
+    kpiEl.innerHTML = `
+      <div class="report-kpi">
+        <div class="report-kpi-val text-cyan">${s.maxStudents ?? '—'}</div>
+        <div class="report-kpi-label">Students Detected</div>
+      </div>
+      <div class="report-kpi">
+        <div class="report-kpi-val text-green">${s.avgAttention != null ? s.avgAttention + '%' : '—'}</div>
+        <div class="report-kpi-label">Avg Attention</div>
+      </div>
+      <div class="report-kpi">
+        <div class="report-kpi-val text-red">${s.alerts ?? '—'}</div>
+        <div class="report-kpi-label">Behaviour Alerts</div>
+      </div>
+      <div class="report-kpi">
+        <div class="report-kpi-val">${duration ? fmtDuration(duration) : '—'}</div>
+        <div class="report-kpi-label">Duration</div>
+      </div>
+    `;
+
+    // Charts
+    const counts = s.behaviourCounts || {};
+    const labels = Object.keys(counts);
+    const vals   = Object.values(counts);
+    const colors = labels.map(l => CHART_COLORS[l] || '#94a3b8');
+
+    const dCtx = document.getElementById('reportDoughnut').getContext('2d');
+    chartInstances.doughnut = new Chart(dCtx, {
+      type: 'doughnut',
+      data: { labels, datasets: [{ data: vals, backgroundColor: colors, borderWidth: 2, borderColor: '#0d1628' }] },
+      options: {
+        plugins: { legend: { labels: { color: '#94a3b8', font: { size: 11 } } } },
+        cutout: '65%',
+      }
+    });
+
+    const bCtx = document.getElementById('reportBar').getContext('2d');
+    chartInstances.bar = new Chart(bCtx, {
+      type: 'bar',
+      data: { labels, datasets: [{ label: 'Count', data: vals, backgroundColor: colors.map(c => c + 'cc'), borderColor: colors, borderWidth: 1 }] },
+      options: {
+        indexAxis: 'y',
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+          y: { ticks: { color: '#94a3b8' }, grid: { display: false } },
+        }
+      }
+    });
+
+    // Event log
+    const events = s.eventLog || Store.get('event_log', []);
+    const tbody  = document.getElementById('eventLogBody');
+    const sevMap = { 0: ['Low','text-green'], 1: ['Medium','text-amber'], 2: ['High','text-red'], 3: ['High','text-red'] };
+    document.getElementById('eventLogCount').textContent = events.length + ' events';
+    tbody.innerHTML = events.slice(0, 100).map(ev => {
+      const [sevLabel, sevClass] = sevMap[ev.severity ?? 0] || ['Low','text-green'];
+      return `<tr>
+        <td style="font-variant-numeric:tabular-nums;">${fmtTime(ev.timestamp)}</td>
+        <td>${ev.id ?? '—'}</td>
+        <td><span class="behavior-badge ${(ev.prev||'').toLowerCase()}">${ev.prev || '—'}</span></td>
+        <td><span class="behavior-badge ${(ev.current||'').toLowerCase().replace(/\s/g,'')}">${ev.current || ev.text || '—'}</span></td>
+        <td class="${sevClass}" style="font-weight:600;font-size:0.8rem;">${sevLabel}</td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:24px;">No events in this session.</td></tr>';
+  }
+</script>
+</body>
+</html>

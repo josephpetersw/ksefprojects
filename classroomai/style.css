@@ -1,0 +1,240 @@
+/* ==========================================================================
+   🌍 Classroom AI Analysis - Modernized UI & Navigation
+   ========================================================================== */
+
+/* 🎨 CSS Variables for Consistent Colors */
+:root {
+    --primary-color: #212529; /* Dark Theme */
+    --secondary-color: #007bff;
+    --accent-color: #17a2b8;
+    --light-bg: #f8f9fa;
+    --text-color: #ffffff;
+    --sidebar-bg: #1c1f23;
+    --footer-bg: #181b1f;
+    --font-family: 'Poppins', sans-serif;
+}
+
+/* Reset & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--light-bg);
+    color: var(--primary-color);
+}
+
+/* ==========================================================================
+   🔝 FIXED TOP NAVIGATION BAR
+   ========================================================================== */
+.top-navbar {
+    width: 100%;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    padding: 15px 30px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.top-navbar .logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+}
+
+.top-navbar .nav-icons {
+    display: flex;
+    align-items: center;
+}
+
+.top-navbar .nav-icons a,
+.top-navbar .nav-icons button {
+    margin-left: 15px;
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.top-navbar .nav-icons a:hover,
+.top-navbar .nav-icons button:hover {
+    color: var(--accent-color);
+}
+
+/* ==========================================================================
+   📂 MODERN SIDE NAVIGATION BAR
+   ========================================================================== */
+.side-nav {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 260px;
+    height: calc(100% - 60px);
+    background-color: var(--sidebar-bg);
+    padding-top: 20px;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+}
+
+.side-nav a {
+    display: flex;
+    align-items: center;
+    color: var(--text-color);
+    padding: 15px 20px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.side-nav a:hover,
+.side-nav a.active {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+}
+
+.side-nav .nav-header {
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: var(--accent-color);
+}
+
+/* 📱 Responsive Sidebar for Small Screens */
+@media (max-width: 768px) {
+    .side-nav {
+        transform: translateX(-100%);
+    }
+    .main-content {
+        margin-left: 0;
+    }
+}
+
+/* ==========================================================================
+   📌 MAIN CONTENT AREA (Aligned & Well-Spaced)
+   ========================================================================== */
+.main-content {
+    margin-top: 80px; /* Space for navbar */
+    margin-left: 260px;
+    padding: 30px;
+    min-height: calc(100vh - 80px - 50px); /* Adjusted for header and footer */
+    background-color: var(--light-bg);
+    transition: margin-left 0.3s ease;
+}
+
+/* ==========================================================================
+   📢 MODERN FOOTER (STICKY)
+   ========================================================================== */
+.footer {
+    width: 100%;
+    background-color: var(--footer-bg);
+    color: var(--text-color);
+    text-align: center;
+    padding: 15px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   📊 Dashboard Cards (Aligned & Well-Designed)
+   ========================================================================== */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    font-weight: bold;
+    color: white;
+    padding: 15px;
+}
+
+.bg-primary { background-color: #007bff !important; }
+.bg-success { background-color: #28a745 !important; }
+.bg-danger { background-color: #dc3545 !important; }
+.bg-warning { background-color: #ffc107 !important; }
+.bg-info { background-color: #17a2b8 !important; }
+
+/* ==========================================================================
+   🎥 Camera Feed & AI Object Detection
+   ========================================================================== */
+.video-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+video, canvas {
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    width: 80%;
+    max-width: 800px;
+}
+
+canvas {
+    position: absolute;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   🌙 Dark Mode Styling
+   ========================================================================== */
+.dark-mode {
+    background-color: #121212;
+    color: white;
+}
+
+.dark-mode .top-navbar,
+.dark-mode .side-nav,
+.dark-mode .footer {
+    background-color: #181b1f;
+    color: white;
+}
+
+.dark-mode .card {
+    background-color: #222;
+    color: white;
+}
+
+.dark-mode .card-header {
+    background-color: var(--secondary-color);
+}
+
+.dark-mode a {
+    color: var(--accent-color);
+}
+
+.dark-mode a:hover {
+    color: var(--text-color);
+}
+
+/* ==========================================================================
+   🎨 Utility Classes
+   ========================================================================== */
+.text-primary { color: #007bff !important; }
+.text-success { color: #28a745 !important; }
+.text-danger { color: #dc3545 !important; }
+.text-warning { color: #ffc107 !important; }
+.text-info { color: #17a2b8 !important; }

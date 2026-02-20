@@ -1,0 +1,31 @@
+/* 🎯 Attention & Noise Meters */
+.meter-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 35%;
+    margin-left: 20px;
+}
+
+.meter {
+    width: 80%;
+    height: 20px;
+    background: #e9ecef;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    margin: 15px 0;
+}
+
+.meter-fill {
+    height: 100%;
+    width: 0%;
+    background: #28a745;
+    transition: width 0.3s ease-in-out;
+}
+
+/* 🔊 Noise Meter in Red */
+#noiseMeter {
+    background: #dc3545;
+}

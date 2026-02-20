@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>CCTV Room — Classroom AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .cctv-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .cctv-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all var(--t-fast);
+      position: relative;
+    }
+    .cctv-card:hover {
+      border-color: var(--blue-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+    .cctv-cam-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      backdrop-filter: blur(4px);
+    }
+    .cctv-live-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(220, 38, 38, 0.85); /* Red for rec */
+      color: #fff;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.6; }
+      100% { opacity: 1; }
+    }
+    .cctv-image {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #EFEAE2;
+      object-fit: cover;
+      display: block;
+    }
+    .cctv-info {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .cctv-title {
+      font-family: var(--font-head);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .cctv-desc {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <img src="kseflogo.png" alt="KSEF" class="sidebar-brand-logo">
+      <div class="sidebar-brand-text">
+        <span class="sidebar-brand-name">Classroom AI</span>
+      <span class="sidebar-brand-sub">62nd KSEF · 2026</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Monitor</span>
+      <a href="dashboard.html" class="nav-link"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+      <a href="livefeed.html" class="nav-link"><i class="fas fa-broadcast-tower"></i><span>Live Feed</span></a>
+      <a href="cctv_room.html" class="nav-link"><i class="fas fa-video"></i><span>CCTV Room</span></a>
+      <a href="upload.html" class="nav-link"><i class="fas fa-film"></i><span>Video Analysis</span></a>
+      <span class="nav-section-label">Library</span>
+      <a href="videos.html" class="nav-link"><i class="fas fa-photo-video"></i><span>Video Library</span></a>
+      <span class="nav-section-label">Insights</span>
+      <a href="statistics.html" class="nav-link"><i class="fas fa-chart-line"></i><span>Statistics</span></a>
+      <a href="report.html" class="nav-link"><i class="fas fa-file-alt"></i><span>Session Report</span></a>
+      <span class="nav-section-label">System</span>
+      <a href="settings.html" class="nav-link"><i class="fas fa-sliders"></i><span>Settings</span></a>
+      <a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i><span>About</span></a>
+      <a href="help.html" class="nav-link"><i class="fas fa-circle-question"></i><span>Help</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      Precious Lydiah &amp; Shirleen Wambui<br>Maryhill Girls High School
+    </div>
+  </aside>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <button class="topbar-toggle topbar-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <h1 class="topbar-title">CCTV Room Overview</h1>
+    <div class="topbar-actions">
+      <span id="topbarClock" style="font-size:0.82rem;color:var(--text-muted);font-variant-numeric:tabular-nums;"></span>
+      <div class="user-chip"><div class="user-avatar">PL</div><span>Precious &amp; Shirleen</span></div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="main-content">
+    
+    <div class="flex items-center justify-between mb-16">
+      <div style="font-size:0.9rem; color:var(--text-secondary);">
+        Real-time multi-camera thumbnails mapping from the <code>cctv_room</code> directory.
+      </div>
+      <button class="btn btn-ghost" onclick="loadCCTVImages()" title="Refresh grid"><i class="fas fa-sync-alt"></i> Refresh</button>
+    </div>
+
+    <!-- CCTV Grid -->
+    <div class="cctv-grid" id="cctvGrid">
+      <div class="empty-state" style="grid-column: 1 / -1; min-height: 200px;">
+        <i class="fas fa-spinner fa-spin" style="opacity: 0.5;"></i>
+        <p>Scanning for dynamic feeds...</p>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="js/logger.js"></script>
+<script src="js/app.js"></script>
+<script>
+  async function loadCCTVImages() {
+    const grid = document.getElementById('cctvGrid');
+    grid.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1; min-height: 200px;"><i class="fas fa-spinner fa-spin"></i><p>Loading thumbnails...</p></div>';
+    
+    try {
+      // Call the PHP API to list dynamic files
+      const res = await fetch('api/cctv_images.php');
+      if (!res.ok) throw new Error('API failed');
+      const images = await res.json();
+      
+      grid.innerHTML = '';
+      
+      if (images.length === 0) {
+        grid.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1; min-height: 200px;"><i class="fas fa-video-slash" style="font-size:2rem; opacity:0.3; margin-bottom:10px;"></i><p>No images found in the <code>cctv_room</code> folder.</p></div>';
+        
+        // Let's at least show some dummy empty cards.
+        for(let i=1; i<=3; i++) {
+           createCard(grid, '', \`Camera Block \${i}\`, 'Offline / Setup pending');
+        }
+        return;
+      }
+
+      // We have dynamic images
+      images.forEach((img, index) => {
+        let name = img.split('.')[0].replace(/[-_]/g, ' ');
+        name = name.charAt(0).toUpperCase() + name.slice(1);
+        
+        createCard(grid, \`cctv_room/\${img}\`, name || \`Camera \${index+1}\`, 'Active');
+      });
+
+    } catch (e) {
+      console.warn('Could not fetch from PHP API. Attempting fallback...', e);
+      // Fallback: Just try to load predefined names since user might not be using PHP right now
+      grid.innerHTML = '';
+      
+      // We will create some default placeholders indicating where to put images
+      createCard(grid, 'cctv_room/cam1.jpg', 'Camera 1', 'Looking for cam1.jpg');
+      createCard(grid, 'cctv_room/cam2.jpg', 'Camera 2', 'Looking for cam2.jpg');
+      createCard(grid, 'cctv_room/cam3.jpg', 'Camera 3', 'Looking for cam3.jpg');
+    }
+  }
+
+  function createCard(grid, src, title, status) {
+    const card = document.createElement('div');
+    card.className = 'cctv-card';
+    
+    let isLive = status === 'Active';
+    
+    // We add an "onerror" to gracefully handle missing fallback images
+    const imgHtml = src
+      ? \`<img src="\${src}" alt="\${title}" class="cctv-image" onerror="this.src=''; this.onerror=null; this.nextElementSibling.style.display='flex';" />
+         <div class="cctv-image" style="display:none; align-items:center; justify-content:center; flex-direction:column; gap:8px; color:var(--text-muted);">
+            <i class="fas fa-image" style="font-size:2rem;opacity:0.3"></i>
+            <span style="font-size:0.75rem">No Image Found</span>
+         </div>\`
+      : \`<div class="cctv-image" style="display:flex; align-items:center; justify-content:center; flex-direction:column; gap:8px; color:var(--text-muted);">
+            <i class="fas fa-video-slash" style="font-size:2rem;opacity:0.3"></i>
+            <span style="font-size:0.75rem">Offline Feed</span>
+         </div>\`;
+
+    card.innerHTML = \`
+      \${imgHtml}
+      <div class="cctv-cam-badge"><i class="fas fa-camera"></i> \${title.substring(0,8).toUpperCase()}</div>
+      \${isLive ? '<div class="cctv-live-badge"><i class="fas fa-circle" style="font-size:0.5rem;"></i> REC</div>' : ''}
+      <div class="cctv-info">
+        <div class="cctv-title">\${title}</div>
+        <div class="cctv-desc">
+          <span>\${status}</span>
+          <span>\${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+        </div>
+      </div>
+    \`;
+    grid.appendChild(card);
+  }
+
+  // Load right away
+  document.addEventListener('DOMContentLoaded', loadCCTVImages);
+</script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>About — Classroom AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .about-hero {
+      background: linear-gradient(135deg, rgba(29,78,216,0.12), rgba(6,182,212,0.06));
+      border: 1px solid rgba(6,182,212,0.15);
+      border-radius: var(--radius-md);
+      padding: 36px 32px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .about-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(29,78,216,0.05) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(29,78,216,0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+    .about-hero-content { position: relative; z-index: 1; }
+    .about-hero h2 {
+      font-family: var(--font-head);
+      font-size: 1.8rem; font-weight: 700;
+      background: linear-gradient(135deg, var(--text-primary) 30%, var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+    .about-hero p { color: var(--text-secondary); max-width: 600px; line-height: 1.7; }
+
+    .team-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .team-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 28px 24px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .team-card:hover { border-color: rgba(6,182,212,0.3); transform: translateY(-2px); }
+    .team-avatar {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue-light), var(--cyan));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head); font-size: 1.6rem; font-weight: 700;
+      color: white; margin: 0 auto 16px;
+      box-shadow: 0 8px 32px rgba(6,182,212,0.3);
+    }
+    .team-name { font-family: var(--font-head); font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
+    .team-role { font-size: 0.82rem; color: var(--cyan); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+    .team-bio { font-size: 0.84rem; color: var(--text-muted); line-height: 1.65; }
+
+    .behav-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: var(--radius-full);
+      font-size: 0.8rem; font-weight: 600; margin: 4px;
+    }
+    .timeline { display: flex; flex-direction: column; gap: 0; }
+    .timeline-item {
+      display: flex; gap: 20px;
+      padding-bottom: 24px;
+      position: relative;
+    }
+    .timeline-item:not(:last-child)::before {
+      content: '';
+      position: absolute; left: 17px; top: 36px;
+      bottom: 0; width: 2px;
+      background: var(--border);
+    }
+    .timeline-dot {
+      width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+      background: rgba(29,78,216,0.2); border: 2px solid var(--blue-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; color: var(--blue-light); z-index: 1;
+    }
+    .timeline-title { font-family:var(--font-head); font-size:0.95rem; font-weight:700; margin-bottom:4px; }
+    .timeline-text { font-size:0.85rem; color:var(--text-muted); line-height:1.65; }
+
+    @media (max-width: 600px) {
+      .team-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <img src="kseflogo.png" alt="KSEF" class="sidebar-brand-logo">
+      <div class="sidebar-brand-text">
+        <span class="sidebar-brand-name">Classroom AI</span>
+        <span class="sidebar-brand-sub">62nd KSEF · 2026</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Monitor</span>
+      <a href="dashboard.html" class="nav-link"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+      <a href="livefeed.html" class="nav-link"><i class="fas fa-broadcast-tower"></i><span>Live Feed</span></a>
+      <a href="cctv_room.html" class="nav-link"><i class="fas fa-video"></i><span>CCTV Room</span></a>
+      <a href="upload.html" class="nav-link"><i class="fas fa-film"></i><span>Video Analysis</span></a>
+      <span class="nav-section-label">Library</span>
+      <a href="videos.html" class="nav-link"><i class="fas fa-photo-video"></i><span>Video Library</span></a>
+      <span class="nav-section-label">Insights</span>
+      <a href="statistics.html" class="nav-link"><i class="fas fa-chart-line"></i><span>Statistics</span></a>
+      <a href="report.html" class="nav-link"><i class="fas fa-file-alt"></i><span>Session Report</span></a>
+      <span class="nav-section-label">System</span>
+      <a href="settings.html" class="nav-link"><i class="fas fa-sliders"></i><span>Settings</span></a>
+      <a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i><span>About</span></a>
+      <a href="help.html" class="nav-link"><i class="fas fa-circle-question"></i><span>Help</span></a>
+    </nav>
+    <div class="sidebar-footer">Precious Lydiah &amp; Shirleen Wambui<br>Maryhill Girls High School</div>
+  </aside>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <button class="topbar-toggle topbar-btn" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <h1 class="topbar-title">About the Project</h1>
+    <div class="topbar-actions">
+      <span id="topbarClock" style="font-size:0.82rem;color:var(--text-muted);font-variant-numeric:tabular-nums;"></span>
+      <button class="topbar-btn" id="darkModeToggle" title="Toggle theme"><i id="darkModeIcon" class="fas fa-moon"></i></button>
+      <div class="user-chip"><div class="user-avatar">PL</div><span>Precious &amp; Shirleen</span></div>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <!-- Hero -->
+    <div class="about-hero anim-fade-up">
+      <div class="about-hero-content">
+        <div class="badge mb-8"><i class="fas fa-star" style="margin-right:6px;color:#fcd34d;"></i>62nd Kenya Science &amp; Engineering Fair · 2026</div>
+        <h2>Classroom AI</h2>
+        <p>A real-time, in-browser AI system that classifies student behaviour from facial expressions and head-pose estimation — designed to help Kenyan teachers gain objective insights into classroom engagement.</p>
+      </div>
+    </div>
+
+    <!-- Mission + Vision -->
+    <div class="grid-2 page-section anim-fade-up anim-delay-1">
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-bullseye"></i> Mission</div>
+        </div>
+        <p style="color:var(--text-secondary);font-size:0.9rem;line-height:1.75;">To provide Kenyan secondary school teachers with an affordable, privacy-respecting AI tool that offers real-time, objective data on student engagement and classroom behaviour — all running entirely within a standard web browser, with no external servers and no specialist hardware.</p>
+      </div>
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-eye"></i> Vision</div>
+        </div>
+        <p style="color:var(--text-secondary);font-size:0.9rem;line-height:1.75;">A future where every classroom in Kenya has access to AI-assisted teaching support — not to replace teacher judgment, but to augment it with data. We envision this technology reducing learning gaps caused by undetected disengagement and enabling more adaptive, responsive pedagogy.</p>
+      </div>
+    </div>
+
+    <!-- Behaviour Taxonomy -->
+    <div class="glass-card page-section anim-fade-up anim-delay-2">
+      <div class="card-header">
+        <div class="card-title"><i class="fas fa-tags"></i> Behaviour Classification System</div>
+      </div>
+      <p style="color:var(--text-muted);font-size:0.88rem;margin-bottom:18px;">Each detected student face is assigned one of 8 behaviour labels based on the dominant facial expression and head-pose estimation. Labels are colour-coded by severity.</p>
+      <div>
+        <span class="behav-chip behavior-badge attentive">✓ Attentive</span>
+        <span class="behav-chip behavior-badge engaged">★ Engaged</span>
+        <span class="behav-chip behavior-badge alert-b">! Alert</span>
+        <span class="behav-chip behavior-badge disengaged">− Disengaged</span>
+        <span class="behav-chip behavior-badge anxious">⚠ Anxious</span>
+        <span class="behav-chip behavior-badge disruptive">✗ Disruptive</span>
+        <span class="behav-chip behavior-badge confused">? Confused</span>
+        <span class="behav-chip behavior-badge suspicious">👀 Suspicious</span>
+      </div>
+    </div>
+
+    <!-- Team -->
+    <div class="section-title anim-fade-up">The Team</div>
+    <div class="team-grid page-section anim-fade-up anim-delay-1">
+      <div class="team-card">
+        <div class="team-avatar">PL</div>
+        <div class="team-name">Precious Lydiah</div>
+        <div class="team-role">Lead Researcher &amp; Developer</div>
+        <p class="team-bio">Designed the AI detection pipeline, built the CSS design system and all front-end pages. Led research on facial expression mapping and classroom behaviour taxonomy.</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar" style="background:linear-gradient(135deg,#7c3aed,var(--cyan));">SW</div>
+        <div class="team-name">Shirleen Wambui</div>
+        <div class="team-role">Co-Researcher &amp; Backend Dev</div>
+        <p class="team-bio">Built the PHP backend, statistics module, and error logging system. Conducted field testing and wrote the research paper. Managed session data architecture.</p>
+      </div>
+    </div>
+
+    <!-- Research Timeline -->
+    <div class="glass-card page-section anim-fade-up">
+      <div class="card-header"><div class="card-title"><i class="fas fa-timeline"></i> Project Timeline</div></div>
+      <div class="timeline mt-16">
+        <div class="timeline-item">
+          <div class="timeline-dot"><i class="fas fa-lightbulb"></i></div>
+          <div>
+            <div class="timeline-title">Research &amp; Literature Review</div>
+            <p class="timeline-text">Reviewed Paul Ekman's FACS framework, prior work on affective computing in education, and AI ethics in school settings. Identified face-api.js as the best fit for in-browser, privacy-preserving AI.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"><i class="fas fa-code"></i></div>
+          <div>
+            <div class="timeline-title">Prototype Development</div>
+            <p class="timeline-text">Built the AI engine, detection loop, behaviour classification mapping, and canvas overlay. Developed the CSS design system with dark mode, glassmorphism UI, and responsive layout.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"><i class="fas fa-flask"></i></div>
+          <div>
+            <div class="timeline-title">Field Testing</div>
+            <p class="timeline-text">Tested the system against classroom video recordings. Measured face detection rate (87%), behaviour accuracy (73% vs. manual annotation), and latency (400ms average).</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"><i class="fas fa-trophy"></i></div>
+          <div>
+            <div class="timeline-title">KSEF 2026 Submission</div>
+            <p class="timeline-text">Submitted to the 62nd Kenya Science and Engineering Fair in the AI &amp; Technology category. Representing Maryhill Girls High School, Thika, Kenya.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tech Stack -->
+    <div class="glass-card page-section anim-fade-up">
+      <div class="card-header"><div class="card-title"><i class="fas fa-layer-group"></i> Technology Stack</div></div>
+      <div class="grid-3 mt-16">
+        <div style="text-align:center;padding:16px;background:rgba(255,255,255,0.03);border-radius:var(--radius-sm);border:1px solid var(--border);">
+          <div style="font-size:1.8rem;margin-bottom:10px;">🤖</div>
+          <div style="font-family:var(--font-head);font-weight:700;margin-bottom:6px;">face-api.js</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);">TinyFaceDetector, FaceLandmark68, FaceExpressionNet via TensorFlow.js</div>
+        </div>
+        <div style="text-align:center;padding:16px;background:rgba(255,255,255,0.03);border-radius:var(--radius-sm);border:1px solid var(--border);">
+          <div style="font-size:1.8rem;margin-bottom:10px;">📊</div>
+          <div style="font-family:var(--font-head);font-weight:700;margin-bottom:6px;">Chart.js</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);">Engagement line chart, behaviour doughnut and bar charts</div>
+        </div>
+        <div style="text-align:center;padding:16px;background:rgba(255,255,255,0.03);border-radius:var(--radius-sm);border:1px solid var(--border);">
+          <div style="font-size:1.8rem;margin-bottom:10px;">🎨</div>
+          <div style="font-family:var(--font-head);font-weight:700;margin-bottom:6px;">Vanilla CSS</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);">Custom dark design system — no CSS framework</div>
+        </div>
+        <div style="text-align:center;padding:16px;background:rgba(255,255,255,0.03);border-radius:var(--radius-sm);border:1px solid var(--border);">
+          <div style="font-size:1.8rem;margin-bottom:10px;">🔊</div>
+          <div style="font-family:var(--font-head);font-weight:700;margin-bottom:6px;">Web Audio API</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);">Real-time ambient noise level monitoring via AudioContext</div>
+        </div>
+        <div style="text-align:center;padding:16px;background:rgba(255,255,255,0.03);border-radius:var(--radius-sm);border:1px solid var(--border);">
+          <div style="font-size:1.8rem;margin-bottom:10px;">🐘</div>
+          <div style="font-family:var(--font-head);font-weight:700;margin-bottom:6px;">PHP + JSON</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);">Flat-file backend for session &amp; config storage</div>
+        </div>
+        <div style="text-align:center;padding:16px;background:rgba(255,255,255,0.03);border-radius:var(--radius-sm);border:1px solid var(--border);">
+          <div style="font-size:1.8rem;margin-bottom:10px;">📷</div>
+          <div style="font-family:var(--font-head);font-weight:700;margin-bottom:6px;">getUserMedia</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);">Browser camera &amp; microphone access API</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer style="border-top:1px solid var(--border);padding:20px 32px;margin-left:var(--sidebar-w);font-size:0.8rem;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+    <span>Classroom AI &mdash; 62nd KSEF 2026</span>
+    <span>Precious Lydiah &amp; Shirleen Wambui &middot; Maryhill Girls High School</span>
+  </footer>
+</div>
+
+<script src="js/logger.js"></script>
+<script src="js/app.js"></script>
+<script>Logger.info('about', 'About page loaded');</script>
+</body>
+</html>
