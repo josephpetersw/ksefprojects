@@ -354,10 +354,10 @@ textarea {
 .main-content {
   margin-left: var(--sidebar-w);
   margin-top: var(--topbar-h);
-  padding: 20px 24px 32px;
+  padding: 16px 20px 20px;
   min-height: calc(100vh - var(--topbar-h));
   flex: 1;
-  width: 100%;
+  width: calc(100% - var(--sidebar-w));
 }
 
 /* ============================================================
@@ -369,7 +369,7 @@ textarea {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 24px;
+  padding: 16px 20px;
   transition: all var(--t-med);
   position: relative;
 }
@@ -1331,6 +1331,7 @@ input[type="range"] {
   .main-content {
     margin-left: 0;
     padding: 20px 16px 40px;
+    width: 100%;
   }
   .grid-2,
   .grid-3,
